@@ -1,3 +1,6 @@
+-- Purpose: Macro to update the DBTExecutionLog table with the end date and time of the execution and the completion status.
+-- Usage: This macro is used to update the DBTExecutionLog table with the end date and time of the execution and the completion status.
+-- It is typically called at the end of a dbt run to log the completion of the process.
 {% macro log_execution_end(execution_guid) %}
     {% if execute %}
         {% do log('Updating log entry. ExecutionGUID: ' ~ execution_guid, info=True) %}
