@@ -7,3 +7,4 @@ sources:
     tables:
       - name: DBTProcessExecutionLog
       - name: DBTExecutionLog
+      - name: DBTExecutionParameterLog

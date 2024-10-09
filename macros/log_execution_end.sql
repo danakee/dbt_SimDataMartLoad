@@ -13,7 +13,7 @@
                     EndDateTime = SYSDATETIMEOFFSET(),
                     CompletionStatus = 'Success'
                 WHERE 
-                    ExecutionGUID = TRY_CAST('{{ execution_guid }}' AS UNIQUEIDENTIFIER);
+                    ExecutionGUID = TRY_CAST('{{ invocation_id }}' AS UNIQUEIDENTIFIER);
                 
                 SELECT @@ROWCOUNT AS RowsAffected;
             {% endset %}

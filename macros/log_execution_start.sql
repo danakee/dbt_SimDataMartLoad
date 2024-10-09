@@ -15,9 +15,9 @@
         END
 
         INSERT INTO {{ source('logging', 'DBTExecutionLog') }} (
+            InvocationGUID,
             ExecutionGUID,
             Command,
-            CommandLineParams,
             StartDateTime,
             UserName,
             TargetName,
@@ -28,9 +28,9 @@
         OUTPUT
             INSERTED.ExecutionGUID
         VALUES (
+            '{{ invocation_id }}',
             @ExecutionGUID,
             '{{ flags.WHICH }}',
-            NULL,
             SYSDATETIMEOFFSET(),
             SUSER_NAME(),
             '{{ target.name }}',

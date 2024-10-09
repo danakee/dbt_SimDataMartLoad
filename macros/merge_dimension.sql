@@ -46,6 +46,7 @@
     BEGIN TRY
         INSERT INTO {{ source('logging', 'DBTProcessExecutionLog') }}        
         (
+            InvocationGUID,
             ExecutionGUID,
             ProcessGUID,
             ProcessName,
@@ -59,6 +60,7 @@
         )
         VALUES
         (
+            '{{ invocation_id }}',
             @ExecutionGUID,
             @ProcessGUID,
             @ProcessName,
