@@ -1,6 +1,3 @@
--- This macro is used to insert a new row into the DBTExecutionLog table to log the start of a DBT execution.
--- The macro returns the ExecutionGUID of the new row.
-
 {% macro log_execution_start() %}
     {% set dbt_execution_guid = get_execution_guid() %}
     {% do log('Generated execution_guid for INSERT: ' ~ dbt_execution_guid, info=True) %}
