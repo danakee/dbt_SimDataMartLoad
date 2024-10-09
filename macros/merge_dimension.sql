@@ -1,3 +1,4 @@
+-- macros/merge_dimension.sql
 {% macro merge_dimension(target_table, source_table, unique_key, columns_to_update, columns_to_insert) %}
     /*
     This macro is used to merge data from a source table into a target table.
@@ -5,9 +6,6 @@
     The macro also logs the process in the ProcessExecutionLog table in the SimulationsAnalyticsLogging database.
     */
     
-    -- Get the execution GUID for the entire dbt process
-    {% set dbt_execution_guid = get_execution_guid() %}
-
     -- Setup logging variables - These are used downstream 
     DECLARE @BracketedSoureTable nvarchar(1024) = 
         QUOTENAME(PARSENAME('{{ source_table }}', 3)) +  '.' + 
@@ -19,7 +17,6 @@
         QUOTENAME(PARSENAME('{{ target_table }}', 1));
 
     {% set is_full_refresh = flags.FULL_REFRESH %}
-    DECLARE @ExecutionGUID uniqueidentifier = '{{ dbt_execution_guid }}';
     DECLARE @ProcessGUID uniqueidentifier = NEWID();
     DECLARE @ProcessName nvarchar(1024) = '{{ this.name }}';    
     DECLARE @ExecutionStatus nvarchar(20) = 'Incomplete';
@@ -61,7 +58,7 @@
         VALUES
         (
             '{{ invocation_id }}',
-            @ExecutionGUID,
+            NULL,
             @ProcessGUID,
             @ProcessName,
             @BracketedSoureTable,

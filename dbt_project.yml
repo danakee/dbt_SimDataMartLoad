@@ -50,8 +50,10 @@ quoting:
 
 vars:
   python_version: "3.12.6"
-  execution_guid: "{{ log_execution_start() }}"
+
+on-run-start:  
+  - "{{ log_execution_start() }}"
 
 on-run-end:
   - "{{ log_run_parameters() }}"
-  - "{{ log_execution_end(var('execution_guid')) }}"
+  - "{{ log_execution_end() }}"
