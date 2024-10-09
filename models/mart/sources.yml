@@ -1,0 +1,12 @@
+version: 2
+
+sources:
+  - name: mart
+    database: SimulationsAnalytics
+    schema: dbo
+    tables:
+      - name: DimUser
+      - name: DimProject
+      - name: DimSimulator
+      - name: DimSimulatorConfiguration
+      - name: DimSimulatorQualification

@@ -1,0 +1,9 @@
+version: 2
+
+sources:
+  - name: logging
+    database: SimulationsAnalyticsLogging
+    schema: dbo
+    tables:
+      - name: DBTProcessExecutionLog
+      - name: DBTExecutionLog

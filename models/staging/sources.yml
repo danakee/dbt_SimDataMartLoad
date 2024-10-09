@@ -1,0 +1,40 @@
+version: 2
+
+sources:
+  - name: project2
+    database: Project2
+    schema: dbo
+    tables:
+      - name: tblProject
+      - name: tblStatus
+      - name: tblProjType
+      - name: tblAccountingType
+      - name: tblProjPMXref
+
+  - name: employee2
+    database: Employee2
+    schema: dbo
+    tables:
+      - name: tblEmployee
+      - name: tblLocation
+
+  - name: sim2
+    database: Sim2
+    schema: dbo
+    tables:
+      - name: tblACCircular
+      - name: tblACModels
+      - name: tblACModelType
+      - name: tblCertAgency
+      - name: tblCertification
+      - name: tblCertLevel
+      - name: tblClassLink
+      - name: tblConfig
+      - name: tblMfg
+      - name: tblObjectHier
+      - name: tblOwner
+      - name: tblSim
+      - name: tblSimGroup
+      - name: tblSimType
+      - name: tblSimTypeGroup
+      - name: tblStatus

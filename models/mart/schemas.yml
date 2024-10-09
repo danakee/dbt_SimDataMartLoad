@@ -1,0 +1,146 @@
+version: 2
+
+models:
+  - name: dim_project
+    description: "Project dimension table"
+    columns:
+      - name: ProjectKey
+        description: "Unique identifier for the project dimension - surrogate key"
+        data_tests:
+          - unique
+          - not_null
+        meta:
+          sqlserver_identity_insert: true
+      - name: ProjectPKey
+        description: "Unique identifier for the project dimension - natural key"
+        data_tests:
+          - unique
+          - not_null
+      - name: EDWCreatedDatetime
+        description: "Date and time when the record was created in the data warehouse"
+        data_tests:
+          - not_null
+        meta:
+          sqlserver_default_constraint: true
+      - name: EDWLastUpdatedDatetime
+        description: "Date and time when the record was last updated in the data warehouse"
+        data_tests:
+          - not_null
+        meta:
+          sqlserver_default_constraint: true
+
+  - name: dim_user
+    description: "User dimension table"
+    columns:
+      - name: UserKey
+        description: "Unique identifier for the user dimension - surrogate key"
+        data_tests:
+          - unique
+          - not_null
+        meta:
+          sqlserver_identity_insert: true
+      - name: EmployeePKey
+        description: "Unique identifier for the user dimension - natural key"
+        data_tests:
+          - unique
+          - not_null
+      - name: EDWCreatedDatetime
+        description: "Date and time when the record was created in the data warehouse"
+        data_tests:
+          - not_null
+        meta:
+          sqlserver_default_constraint: true
+      - name: EDWLastUpdatedDatetime
+        description: "Date and time when the record was last updated in the data warehouse"
+        data_tests:
+          - not_null
+        meta:
+          sqlserver_default_constraint: true
+      - name: EmployeeNumber
+        description: "Users employee number"
+        #data_tests:
+        #  - dim_user_duplicate_employee_number
+
+  - name: dim_simulator
+    description: "Simulator dimension table"
+    columns:
+      - name: SimulatorKey
+        description: "Unique identifier for the simulator dimension - surrogate key"
+        data_tests:
+          - unique
+          - not_null
+        meta:
+          sqlserver_identity_insert: true
+      - name: SimulatorPKey
+        description: "Unique identifier for the simulator dimension - natural key"
+        data_tests:
+          - unique
+          - not_null
+      - name: EDWCreatedDatetime
+        description: "Date and time when the record was created in the data warehouse"
+        data_tests:
+          - not_null
+        meta:
+          sqlserver_default_constraint: true
+      - name: EDWLastUpdatedDatetime
+        description: "Date and time when the record was last updated in the data warehouse"
+        data_tests:
+          - not_null
+        meta:
+          sqlserver_default_constraint: true
+
+  - name: dim_simulator_configuration
+    description: "Simulator configuration dimension table"
+    columns:
+      - name: SimulatorConfigurationKey
+        description: "Unique identifier for the simulator configuration dimension - surrogate key"
+        data_tests:
+          - unique
+          - not_null
+        meta:
+          sqlserver_identity_insert: true
+      - name: SimulatorConfigurationPKey
+        description: "Unique identifier for the simulator configuration dimension - natural key"
+        data_tests:
+          - unique
+          - not_null
+      - name: EDWCreatedDatetime
+        description: "Date and time when the record was created in the data warehouse"
+        data_tests:
+          - not_null
+        meta:
+          sqlserver_default_constraint: true
+      - name: EDWLastUpdatedDatetime
+        description: "Date and time when the record was last updated in the data warehouse"
+        data_tests:
+          - not_null
+        meta:
+          sqlserver_default_constraint: true
+
+  - name: dim_simulator_qualification
+    description: "Simulator qualification dimension table"
+    columns:
+      - name: SimulatorQualificationKey
+        description: "Unique identifier for the simulator qualification dimension - surrogate key"
+        data_tests:
+          - unique
+          - not_null
+        meta:
+          sqlserver_identity_insert: true
+      - name: SimulatorQualificationPKey
+        description: "Unique identifier for the simulator qualification dimension - natural key"
+        data_tests:
+          - unique
+          - not_null
+      - name: EDWCreatedDatetime
+        description: "Date and time when the record was created in the data warehouse"
+        data_tests:
+          - not_null
+        meta:
+          sqlserver_default_constraint: true
+      - name: EDWLastUpdatedDatetime
+        description: "Date and time when the record was last updated in the data warehouse"
+        data_tests:
+          - not_null
+        meta:
+          sqlserver_default_constraint: true

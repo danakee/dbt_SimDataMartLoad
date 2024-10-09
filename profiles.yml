@@ -1,0 +1,31 @@
+dbt_SimDataMartLoad:
+  outputs:
+    dev:
+      type: sqlserver
+      driver: ODBC Driver 18 for SQL Server
+      server: v0002ws0154.inf.dev.flightsafety.com
+      port: 1433
+      database: SimulationsAnalytics
+      schema: dbo
+      threads: 4
+      trust_cert: true
+      windows_login: true
+  target: dev
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
