@@ -8,3 +8,4 @@ sources:
       - name: DBTProcessExecutionLog
       - name: DBTExecutionLog
       - name: DBTExecutionParameterLog
+      - name: StageTableLastUpdate

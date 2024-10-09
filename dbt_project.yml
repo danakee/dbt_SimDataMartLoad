@@ -42,7 +42,7 @@ models:
     #  +database: SimulationsAnalyticsLogging
     #  +schema: null
     #  +materialized: table
-    
+      
 quoting: 
   database: true
   schema: true

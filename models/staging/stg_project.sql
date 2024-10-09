@@ -1,52 +1,14 @@
-{{
-    config(
-        materialized='incremental',
-        incremental_strategy='merge',
-        unique_key='ProjectPKey',
-        compare_columns=[
-            'ProjectName',
-            'ProjectDescription',
-            'ProjectStatusCode',
-            'ProjectStatusDescription',
-            'ProjectTypeCode',
-            'ProjectTypeDescription',
-            'ReportTypeDescription',
-            'IsEAC',
-            'IsStopDR',
-            'ProjectManagerFirstName',
-            'ProjectManagerLastName',
-            'EffectiveDate',
-            'IsLatest',
-            'ProjectCreateDate',
-            'ProjectUpdateDate',
-            'ProjectVersion',
-            'HvrChangeTime'
-        ],
-        merge_update_columns=[
-            'ProjectName',
-            'ProjectDescription',
-            'ProjectStatusCode',
-            'ProjectStatusDescription',
-            'ProjectTypeCode',
-            'ProjectTypeDescription',
-            'ReportTypeDescription',
-            'IsEAC',
-            'IsStopDR',
-            'ProjectManagerFirstName',
-            'ProjectManagerLastName',
-            'EffectiveDate',
-            'IsLatest',
-            'ProjectCreateDate',
-            'ProjectUpdateDate',
-            'ProjectVersion',
-            'HvrChangeTime',
-            'StageLastUpdatedDatetime'
-        ],
+{{ config(
         database='SimulationsAnalyticsStage',
         alias='StageProject',
+        materialized='incremental',
+        unique_key='ProjectPKey',
+        pre_hook="{% if is_incremental() %}TRUNCATE TABLE {{ this }}{% endif %}",
+        post_hook='{% do run_query("UPDATE [SimulationsAnalyticsLogging].[dbo].[StageTableLastUpdate] SET [LastUpdated] = SYSDATETIMEOFFSET() WHERE [TableName] = \'StageProject\'") %}',
         tags=['staging', 'project']
-    )
-}}
+) }}
+
+{% set last_update_time = get_stage_last_update('StageProject') %}
 
 WITH ProjectManager AS (
     SELECT 
@@ -142,5 +104,5 @@ FROM
 WHERE
     1=1
     {% if is_incremental() %}
-    AND HvrChangeTime > (SELECT ISNULL(MAX(HvrChangeTime), '1900-01-01') FROM {{ this }})
+    AND HvrChangeTime > '{{ last_update_time }}'
     {% endif %}
