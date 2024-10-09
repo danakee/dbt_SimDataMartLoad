@@ -44,7 +44,6 @@
         INSERT INTO {{ source('logging', 'DBTProcessExecutionLog') }}        
         (
             InvocationGUID,
-            ExecutionGUID,
             ProcessGUID,
             ProcessName,
             SourceTable,
@@ -58,7 +57,6 @@
         VALUES
         (
             '{{ invocation_id }}',
-            NULL,
             @ProcessGUID,
             @ProcessName,
             @BracketedSoureTable,

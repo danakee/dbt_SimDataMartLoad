@@ -5,7 +5,6 @@
     {% set insert_statement %}
         INSERT INTO {{ source('logging', 'DBTExecutionLog') }} (
             InvocationGUID,
-            ExecutionGUID,
             Command,
             StartDateTime,
             UserName,
@@ -16,7 +15,6 @@
         )
         VALUES (
             TRY_CAST('{{ invocation_id }}' AS UNIQUEIDENTIFIER),
-            NULL,
             '{{ flags.WHICH }}',
             SYSDATETIMEOFFSET(),
             SUSER_NAME(),
