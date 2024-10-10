@@ -52,8 +52,10 @@ vars:
   python_version: "3.12.6"
 
 on-run-start:  
+  - "{{ validate_command_line() }}"
+  - "{{ log_run_parameters_start() }}"
   - "{{ log_execution_start() }}"
 
 on-run-end:
-  - "{{ log_run_parameters() }}"
+  - "{{ log_run_parameters_end() }}"
   - "{{ log_execution_end() }}"
