@@ -1,14 +1,30 @@
+-- models/staging/stg_project.sql
+
 {{ config(
-        database='SimulationsAnalyticsStage',
-        alias='StageProject',
-        materialized='incremental',
-        unique_key='ProjectPKey',
-        pre_hook="{% if is_incremental() %}TRUNCATE TABLE {{ this }}{% endif %}",
-        post_hook='{% do run_query("UPDATE [SimulationsAnalyticsLogging].[dbo].[StageTableLastUpdate] SET [LastUpdated] = SYSDATETIMEOFFSET() WHERE [TableName] = \'StageProject\'") %}',
-        tags=['staging', 'project']
+    database='SimulationsAnalyticsStage',
+    schema='dbo',
+    alias='StageProject',
+    materialized='table',
+    post_hook='{{ load_stage_table(model_name="StageProject", source_tables=["project2.tblProject", "project2.tblStatus", "project2.tblProjType", "project2.tblAccountingType", "employee2.tblEmployee", "project2.tblProjPMXref"], unique_key="ProjectPKey") }}',
+    tags=['staging', 'project']
 ) }}
 
-{% set last_update_time = get_stage_last_update('StageProject') %}
+{%- set max_loaded_query -%}
+SELECT 
+    ISNULL(MAX(LastUpdated), '1900-01-01')
+FROM 
+    {{ source('logging', 'StageTableLastUpdate') }}
+WHERE 
+    TableName = 'StageProject'
+{%- endset -%}
+
+{%- set max_loaded_result = run_query(max_loaded_query) -%}
+
+{%- if max_loaded_result and max_loaded_result[0][0] -%}
+    {%- set max_loaded = max_loaded_result[0][0] -%}
+{% else %}
+    {%- set max_loaded = '1900-01-01' -%}
+{% endif %}
 
 WITH ProjectManager AS (
     SELECT 
@@ -101,8 +117,5 @@ SELECT
     ,StageLastUpdatedDatetime    
 FROM 
     ProjectData
-WHERE
-    1=1
-    {% if is_incremental() %}
-    AND HvrChangeTime > '{{ last_update_time }}'
-    {% endif %}
+WHERE 
+    HvrChangeTime > '{{ max_loaded }}'
