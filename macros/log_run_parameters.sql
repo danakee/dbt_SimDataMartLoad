@@ -17,6 +17,17 @@
         {% endif %}
     {% endfor %}
 
+    -- Capture selected models
+    {% if selected_resources is defined %}
+        {% set model_names = [] %}
+        {% for resource in selected_resources %}
+            {% if resource.startswith('model.') %}
+                {% do model_names.append(resource.split('.')[-1]) %}
+            {% endif %}
+        {% endfor %}
+        {% do params.append({'name': 'SELECTED_MODELS', 'value': model_names | join(', ')}) %}
+    {% endif %}
+
     -- Build and execute insert statements
     {% for param in params %}
         {% call statement('insert_param') %}
