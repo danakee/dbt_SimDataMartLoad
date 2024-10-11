@@ -18,6 +18,7 @@
     DECLARE @ExecutionStatus nvarchar(20) = 'Incomplete';
     DECLARE @ExecutionMessage nvarchar(4000) = 'Process not complete';
     DECLARE @RowsInserted int = 0;
+    DECLARE @RowsDeleted int = 0;
     DECLARE @ProcessStartTime datetimeoffset = sysdatetimeoffset();
     DECLARE @InitialRowCount int;
     DECLARE @FinalRowCount int;
@@ -30,6 +31,8 @@
     BEGIN TRY
         -- Initial Logging Entry
         SELECT @InitialRowCount = COUNT(*) FROM {{ target_table }};
+        -- Set RowsDeleted to InitialRowCount before truncation to account for truncation in our row counts
+        SET @RowsDeleted = @InitialRowCount;  
 
         INSERT INTO {{ source('logging', 'DBTProcessExecutionLog') }}        
         (
@@ -89,8 +92,8 @@
         ExecutionStatus = @ExecutionStatus,
         ExecutionMessage = @ExecutionMessage,
         RowsInserted = @RowsInserted,
-        RowsUpdated = 0,
-        RowsDeleted = 0,
+        RowsUpdated = 0, -- We never update in a stage table
+        RowsDeleted = @RowsDeleted,        
         FinalRowCount = @FinalRowCount,
         ProcessEndTime = sysdatetimeoffset(),
         ErrorNumber = @ErrorNumber,
