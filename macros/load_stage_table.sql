@@ -51,7 +51,7 @@
             @ProcessName,
             @SourceTables,
             @BracketedTargetTable,
-            CAST(0 AS bit),
+            CAST({% if flags.FULL_REFRESH %}1{% else %}0{% endif %} AS bit),
             @ExecutionStatus,
             @ExecutionMessage,
             @InitialRowCount,
@@ -105,17 +105,31 @@
         RAISERROR(@ErrorMsg, 16, 1);
     END
 
-    -- Update the StageTableLastUpdate table
+    -- Always ensure a row exists in StageTableLastUpdate, but only update LastUpdated on full refresh
     IF @ExecutionStatus = 'Success'
     BEGIN
-        MERGE INTO {{ source('logging', 'StageTableLastUpdate') }} AS target
-        USING (SELECT '{{ target_table.name }}' AS TableName, sysdatetimeoffset() AS LastUpdated) AS source
-        ON target.TableName = source.TableName
-        WHEN MATCHED THEN
-            UPDATE SET LastUpdated = source.LastUpdated
-        WHEN NOT MATCHED THEN
-            INSERT (TableName, LastUpdated)
-            VALUES (source.TableName, source.LastUpdated);
+        -- First, try to insert a new row if it doesn't exist. We will assume a full load in this case.
+        IF NOT EXISTS (SELECT 1 FROM [SimulationsAnalyticsLogging].[dbo].[StageTableLastUpdate] WHERE TableName = '{{ target_table.name }}')
+        BEGIN
+            INSERT INTO [SimulationsAnalyticsLogging].[dbo].[StageTableLastUpdate] (
+                TableName, 
+                LastUpdated
+            )
+            VALUES (
+                '{{ target_table.name }}', 
+                CAST('1900-01-01 00:00:00.000 -00:00' AS datetimeoffset(3))
+            );
+        END
+
+        -- Then, update LastUpdated only if it's a full refresh
+        {% if flags.FULL_REFRESH %}
+        UPDATE 
+            [SimulationsAnalyticsLogging].[dbo].[StageTableLastUpdate]
+        SET 
+            LastUpdated = CAST('1900-01-01 00:00:00.000 -00:00' AS datetimeoffset(3))
+        WHERE 
+            TableName = '{{ target_table.name }}';
+        {% endif %}
     END
 
 {% endmacro %}
