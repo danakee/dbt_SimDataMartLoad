@@ -1,5 +1,3 @@
--- macros/load_stage_table.sql
-
 {% macro load_stage_table(model_name, source_tables, unique_key) %}
 
     {%- set target_relation = this -%}
@@ -22,10 +20,7 @@
     TRUNCATE TABLE {{ target_relation }};
 
     -- Insert the data
-    INSERT INTO {{ target_relation }}
-    (
-        {{ sql }}
-    );
+    {{ sql }};
 
     -- Get the number of affected rows
     SET @affected_rows = @@ROWCOUNT;

@@ -1,11 +1,19 @@
--- models/staging/stg_project.sql
-
 {{ config(
     database='SimulationsAnalyticsStage',
-    schema='dbo',
     alias='StageProject',
     materialized='table',
-    post_hook='{{ load_stage_table(model_name="StageProject", source_tables=["project2.tblProject", "project2.tblStatus", "project2.tblProjType", "project2.tblAccountingType", "employee2.tblEmployee", "project2.tblProjPMXref"], unique_key="ProjectPKey") }}',
+    post_hook='{{ 
+        load_stage_table(
+            model_name="StageProject", 
+            source_tables=[
+                "project2.tblProject", 
+                "project2.tblStatus", 
+                "project2.tblProjType", 
+                "project2.tblAccountingType", 
+                "employee2.tblEmployee", 
+                "project2.tblProjPMXref"], 
+            unique_key="ProjectPKey"
+        ) }}',
     tags=['staging', 'project']
 ) }}
 
@@ -26,6 +34,7 @@ WHERE
     {%- set max_loaded = '1900-01-01' -%}
 {% endif %}
 
+-- ProjectManager CTE
 WITH ProjectManager AS (
     SELECT 
          CAST(pmx.fk_Project AS int)    AS ProjectPKey
@@ -53,6 +62,7 @@ WITH ProjectManager AS (
         pmx.CurrentPM = 1
 ),
 
+-- ProjectData CTE
 ProjectData AS (
     SELECT 
          p.PKey                                     AS ProjectPKey
@@ -94,6 +104,15 @@ ProjectData AS (
             AND pm.SeqNumber = 1
 )
 
+INSERT INTO {{ this }} (
+    ProjectPKey, ProjectName, ProjectDescription, ProjectStatusCode, ProjectStatusDescription,
+    ProjectTypeCode, ProjectTypeDescription, ReportTypeDescription, IsEAC, IsStopDR,
+    ProjectManagerFirstName, ProjectManagerLastName, EffectiveDate, IsLatest,
+    ProjectCreateDate, ProjectUpdateDate, ProjectVersion, HvrChangeTime,
+    StageCreatedDatetime, StageLastUpdatedDatetime
+)
+
+-- Final SELECT statement
 SELECT 
      ProjectPKey
     ,ProjectName
