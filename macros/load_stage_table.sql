@@ -83,7 +83,8 @@
     END CATCH
 
     -- Finalize Logging Update
-    UPDATE {{ source('logging', 'DBTProcessExecutionLog') }}
+    UPDATE
+        {{ source('logging', 'DBTProcessExecutionLog') }}
     SET
         ExecutionStatus = @ExecutionStatus,
         ExecutionMessage = @ExecutionMessage,
@@ -98,38 +99,22 @@
     WHERE
         ProcessGUID = @ProcessGUID;
 
+    -- Update StageTableLastUpdate with current datetime if process was successful
+    IF @ExecutionStatus = 'Success'
+    BEGIN
+        UPDATE 
+            [SimulationsAnalyticsLogging].[dbo].[StageTableLastUpdate]
+        SET 
+            LastUpdated = CAST(SYSDATETIMEOFFSET() AS datetimeoffset(3))
+        WHERE 
+            TableName = '{{ target_table.name }}';
+    END
+
     -- If the process failed, raise an error
     IF @ExecutionStatus = 'Failed'
     BEGIN
         DECLARE @ErrorMsg nvarchar(4000) = 'Failed to load stage table: ' + @ExecutionMessage;
         RAISERROR(@ErrorMsg, 16, 1);
-    END
-
-    -- Always ensure a row exists in StageTableLastUpdate, but only update LastUpdated on full refresh
-    IF @ExecutionStatus = 'Success'
-    BEGIN
-        -- First, try to insert a new row if it doesn't exist. We will assume a full load in this case.
-        IF NOT EXISTS (SELECT 1 FROM [SimulationsAnalyticsLogging].[dbo].[StageTableLastUpdate] WHERE TableName = '{{ target_table.name }}')
-        BEGIN
-            INSERT INTO [SimulationsAnalyticsLogging].[dbo].[StageTableLastUpdate] (
-                TableName, 
-                LastUpdated
-            )
-            VALUES (
-                '{{ target_table.name }}', 
-                CAST('1900-01-01 00:00:00.000 -00:00' AS datetimeoffset(3))
-            );
-        END
-
-        -- Then, update LastUpdated only if it's a full refresh
-        {% if flags.FULL_REFRESH %}
-        UPDATE 
-            [SimulationsAnalyticsLogging].[dbo].[StageTableLastUpdate]
-        SET 
-            LastUpdated = CAST('1900-01-01 00:00:00.000 -00:00' AS datetimeoffset(3))
-        WHERE 
-            TableName = '{{ target_table.name }}';
-        {% endif %}
     END
 
 {% endmacro %}
