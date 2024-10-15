@@ -1,15 +1,27 @@
-Welcome to your new dbt project!
+# DBT Project: dbt_SimDataMartLoad
 
-### Using the starter project
+## Running DBT
 
-Try running the following commands:
-- dbt run
-- dbt test
+To ensure proper logging and execution, always use the provided wrapper script to run dbt commands:
 
+```
+.\invoke-dbt.ps1 [your dbt command and arguments]
+```
 
-### Resources:
-- Learn more about dbt [in the docs](https://docs.getdbt.com/docs/introduction)
-- Check out [Discourse](https://discourse.getdbt.com/) for commonly asked questions and answers
-- Join the [chat](https://community.getdbt.com/) on Slack for live discussions and support
-- Find [dbt events](https://events.getdbt.com) near you
-- Check out [the blog](https://blog.getdbt.com/) for the latest news on dbt's development and best practices
+For example:
+```
+.\invoke-dbt.ps1 run --models my_model --vars '{"my_var": "my_value"}' --full-refresh
+```
+
+### Why Use the Wrapper Script?
+
+The wrapper script ensures that:
+1. All dbt runs are properly logged for auditing and debugging purposes.
+2. Environment variables are correctly set and cleared after each run.
+3. Errors are handled gracefully and logged when they occur.
+
+### Troubleshooting
+
+If you encounter any issues or error messages instructing you to use the wrapper script, please ensure you're running dbt through `invoke-dbt.ps1` as described above.
+
+For further assistance, contact Dana or Khalique.
