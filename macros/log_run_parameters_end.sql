@@ -1,5 +1,9 @@
 {% macro log_run_parameters_end() %}
+
+    -- Check if the macro should be executed
     {% if execute %}
+
+        -- Make a call to get the current datetime macro
         {% call statement('get_current_datetime', fetch_result=True) %}
             SELECT CONVERT(VARCHAR(50), SYSDATETIMEOFFSET(), 127) AS current_datetime;
         {% endcall %}
@@ -8,6 +12,7 @@
         
         {{ log("Debug - Run Completed At: " ~ run_completed_at, info=True) }}
         
+        -- Insert the run completed at parameter into the DBTExecutionParameterLog table
         {% call statement('insert_run_end_parameters') %}
             DECLARE @run_completed_at DATETIME2(3) = '{{ run_completed_at }}';
             DECLARE @timezone_offset VARCHAR(6);
@@ -29,5 +34,7 @@
                 SYSDATETIMEOFFSET()
             );
         {% endcall %}
+        
     {% endif %}
+
 {% endmacro %}

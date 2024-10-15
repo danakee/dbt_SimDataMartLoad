@@ -1,7 +1,7 @@
 {% macro load_stage_table(target_table, source_query, source_tables, unique_key) %}
     /*
     This macro is used to truncate and load data from a source query into a target table.
-    It also logs the process in the DBTProcessExecutionLog table.
+    It also logs the process in the DBTProcessExecutionLog and StageTableLastUpdate tables.
     */
     
     -- Get the last update timestamp
@@ -67,7 +67,7 @@
         -- Execute the source query (which now includes the INSERT INTO)
         {{ source_query }}
 
-        -- Get number of affected rows
+        -- Get number of inserted rows
         SET @RowsInserted = @@ROWCOUNT;
 
         -- Update final row count
@@ -92,7 +92,7 @@
         ExecutionStatus = @ExecutionStatus,
         ExecutionMessage = @ExecutionMessage,
         RowsInserted = @RowsInserted,
-        RowsUpdated = 0, -- We never update in a stage table
+        RowsUpdated = 0, -- We never perform updates in a stage table
         RowsDeleted = @RowsDeleted,        
         FinalRowCount = @FinalRowCount,
         ProcessEndTime = sysdatetimeoffset(),

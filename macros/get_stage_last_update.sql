@@ -1,4 +1,5 @@
 {% macro get_stage_last_update(table_name) %}
+
     {% set query %}
         -- Check for missing row and insert if necessary
         IF NOT EXISTS (SELECT 1 FROM [SimulationsAnalyticsLogging].[dbo].[StageTableLastUpdate] WHERE TableName = '{{ table_name }}')
@@ -27,15 +28,17 @@
                 TableName = '{{ table_name }}';
         {% endif %}
 
-        -- Format the date consistently
+        -- Format the date for consistency
         SELECT FORMAT(@LastUpdated, 'yyyy-MM-ddTHH:mm:ss.fffzzz') AS LastUpdated;
     {% endset %}
 
     {% set results = run_query(query) %}
 
+    -- Return the resulting datetimeoffset or a default value
     {% if execute %}
         {{ return(results.columns[0].values()[0]) }}
     {% else %}
         {{ return('1900-01-01T00:00:00.000+00:00') }}
     {% endif %}
+
 {% endmacro %}
