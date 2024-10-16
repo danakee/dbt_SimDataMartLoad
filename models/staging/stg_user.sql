@@ -28,13 +28,12 @@
     )
 
     INSERT INTO {{ this }} (
-        EmployeePKey,
-        EmployeeNumber,
-        UserFirstName,
-        UserLastName,
-        HvrChangeTime,
-        StageCreatedDatetime,
-        StageLastUpdatedDatetime
+         EmployeePKey
+        ,EmployeeNumber
+        ,UserFirstName
+        ,UserLastName
+        ,HvrChangeTime
+        ,StageCreatedDatetime
     )
     SELECT 
          EmployeePKey
@@ -43,7 +42,6 @@
         ,UserLastName
         ,HvrChangeTime
         ,StageCreatedDatetime
-        ,StageLastUpdatedDatetime
     FROM 
         UserData
     WHERE 

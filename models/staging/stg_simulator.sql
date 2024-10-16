@@ -53,7 +53,6 @@
                     (ss.hvr_change_time)
             ) AS ChangeTime(ct))                        AS HvrChangeTime
             ,CAST(sysdatetimeoffset() AS datetimeoffset(3)) AS StageCreatedDatetime
-            ,CAST(sysdatetimeoffset() AS datetimeoffset(3)) AS StageLastUpdatedDatetime    
         FROM 
             {{ source('sim2', 'tblSim') }} AS s
             LEFT JOIN {{ source('sim2', 'tblMfg') }} AS mfg
@@ -75,13 +74,39 @@
     )
 
     INSERT INTO {{ this }} (
-        SimulatorPKey, SimulatorId, SimulatorName, SourceCreatedDate, SourceLastUpdatedDate,
-        FSIAssetNumber, LocationId, LeadLocationId, DestinationId, IsILS, DateReadyForTraining,
-        SimulatorTypeKey, SimulatorTypeName, AircraftModelKey, AircraftModelCode, AircraftModelName,
-        AircraftModelTypeValue, AircraftTypeName, AircraftTypeDescription, StatusKey, StatusName,
-        TrackLostTime, SimulatorGroupKey, SimulatorGroupName, SimulatorGroupDescription, ShipDate,
-        OwnerId, OwnerCustomerId, OwnerDescription, ManufacturerId, ManufacturerName,
-        HvrChangeTime, StageCreatedDatetime, StageLastUpdatedDatetime
+         SimulatorPKey
+        ,SimulatorId
+        ,SimulatorName
+        ,SourceCreatedDate
+        ,SourceLastUpdatedDate
+        ,FSIAssetNumber
+        ,LocationId
+        ,LeadLocationId
+        ,DestinationId
+        ,IsILS
+        ,DateReadyForTraining
+        ,SimulatorTypeKey
+        ,SimulatorTypeName
+        ,AircraftModelKey
+        ,AircraftModelCode
+        ,AircraftModelName
+        ,AircraftModelTypeValue
+        ,AircraftTypeName
+        ,AircraftTypeDescription
+        ,StatusKey
+        ,StatusName
+        ,TrackLostTime
+        ,SimulatorGroupKey
+        ,SimulatorGroupName
+        ,SimulatorGroupDescription
+        ,ShipDate
+        ,OwnerId
+        ,OwnerCustomerId
+        ,OwnerDescription
+        ,ManufacturerId
+        ,ManufacturerName
+        ,HvrChangeTime
+        ,StageCreatedDatetime
     )
     SELECT 
          SimulatorPKey
@@ -117,7 +142,6 @@
         ,ManufacturerName
         ,HvrChangeTime
         ,StageCreatedDatetime
-        ,StageLastUpdatedDatetime
     FROM 
         SimulatorWithAttributes
     WHERE 

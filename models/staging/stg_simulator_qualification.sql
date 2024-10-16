@@ -48,8 +48,6 @@
                 (acc.hvr_change_time)
         ) AS ChangeTime(ct))                          AS HvrChangeTime
         ,CAST(sysdatetimeoffset() AS datetimeoffset(3)) AS StageCreatedDatetime
-        ,CAST(sysdatetimeoffset() AS datetimeoffset(3)) AS StageLastUpdatedDatetime       
-
     FROM
         {{ source('sim2', 'tblSim') }} AS s
         INNER JOIN {{ source('sim2', 'tblObjectHier') }} AS so
@@ -78,17 +76,33 @@
     )
 
     INSERT INTO {{ this }} (
-        SimulatorQualificationPKey, SimulatorConfigurationPKey, SimulatorPKey,
-        QualificationAgencyId, QualificationLevelId, SimulatorQualificationEffectiveDate,
-        SimulatorQualificationExpiryDate, SimulatorQualificationDescription,
-        SimulatorQualificationProcessStartDate, ScheduledRequalificationDate,
-        InitialSimulatorQualificationDate, IsSimulatorQualificationDeleted,
-        OriginalSimulatorQualificationProjectName, IsHiddenInReport,
-        SimulatorQualificationLevelName, SimulatorQualificationLevelDescription,
-        IsQualificationLevelApproved, ACCircularName, IsACCircularApproved,
-        SimulatorQualificationAgencyName, SimulatorQualificationAgencyDescription,
-        AgencySimulatorId, IsAgencyDomestic, AgencySponsorCountryCode, IsAgencyDeleted,
-        HvrChangeTime, StageCreatedDatetime, StageLastUpdatedDatetime
+         SimulatorQualificationPKey
+        ,SimulatorConfigurationPKey
+        ,SimulatorPKey
+        ,QualificationAgencyId
+        ,QualificationLevelId
+        ,SimulatorQualificationEffectiveDate
+        ,SimulatorQualificationExpiryDate
+        ,SimulatorQualificationDescription
+        ,SimulatorQualificationProcessStartDate
+        ,ScheduledRequalificationDate
+        ,InitialSimulatorQualificationDate
+        ,IsSimulatorQualificationDeleted
+        ,OriginalSimulatorQualificationProjectName
+        ,IsHiddenInReport
+        ,SimulatorQualificationLevelName
+        ,SimulatorQualificationLevelDescription
+        ,IsQualificationLevelApproved
+        ,ACCircularName
+        ,IsACCircularApproved
+        ,SimulatorQualificationAgencyName
+        ,SimulatorQualificationAgencyDescription
+        ,AgencySimulatorId
+        ,IsAgencyDomestic
+        ,AgencySponsorCountryCode
+        ,IsAgencyDeleted
+        ,HvrChangeTime
+        ,StageCreatedDatetime
     )
     SELECT 
          SimulatorQualificationPKey
@@ -118,7 +132,6 @@
         ,IsAgencyDeleted
         ,HvrChangeTime
         ,StageCreatedDatetime
-        ,StageLastUpdatedDatetime
     FROM 
         SimulatorQualification
     WHERE 

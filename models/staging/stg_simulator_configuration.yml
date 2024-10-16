@@ -60,10 +60,3 @@ models:
           the staging process begins.
         data_type: datetimeoffset
         quote: true
-      - name: StageLastUpdatedDatetime
-        description: This column represents the date and time when the staging table was
-          last updated. The value is automatically set to the current system
-          date and time whenever a new record is inserted into the staging
-          table.
-        data_type: datetimeoffset
-        quote: true

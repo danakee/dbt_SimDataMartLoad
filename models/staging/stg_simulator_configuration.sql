@@ -25,7 +25,6 @@
                     (l.hvr_change_time)
             ) AS ChangeTime(ct))                        AS HvrChangeTime
             ,CAST(sysdatetimeoffset() AS datetimeoffset(3)) AS StageCreatedDatetime
-            ,CAST(sysdatetimeoffset() AS datetimeoffset(3)) AS StageLastUpdatedDatetime
         FROM
             {{ source('sim2', 'tblSim') }} AS s
             JOIN {{ source('sim2', 'tblObjectHier') }} AS so
@@ -42,16 +41,15 @@
     )
 
     INSERT INTO {{ this }} (
-        SimulatorConfigurationPKey,
-        SimulatorPKey,
-        ConfigurationName,
-        LocationName,
-        IsDefault,
-        SourceCreatedDatetime,
-        SourceLastUpdatedDatetime,
-        HvrChangeTime,
-        StageCreatedDatetime,
-        StageLastUpdatedDatetime
+         SimulatorConfigurationPKey
+        ,SimulatorPKey
+        ,ConfigurationName
+        ,LocationName
+        ,IsDefault
+        ,SourceCreatedDatetime
+        ,SourceLastUpdatedDatetime
+        ,HvrChangeTime
+        ,StageCreatedDatetime
     )
     SELECT 
          SimulatorConfigurationPKey
@@ -63,7 +61,6 @@
         ,SourceLastUpdatedDatetime
         ,HvrChangeTime
         ,StageCreatedDatetime
-        ,StageLastUpdatedDatetime
     FROM 
         SimulationConfiguration
     WHERE 

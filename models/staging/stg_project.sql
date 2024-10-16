@@ -61,7 +61,6 @@
                     (pm.hvr_change_time)
             ) AS ChangeTime(ct))                        AS HvrChangeTime
             ,CAST(sysdatetimeoffset() AS datetimeoffset(3)) AS StageCreatedDatetime
-            ,CAST(sysdatetimeoffset() AS datetimeoffset(3)) AS StageLastUpdatedDatetime   
         FROM 
             {{ source('project2', 'tblProject') }} AS p
             JOIN {{ source('project2', 'tblStatus') }} AS s 
@@ -76,11 +75,25 @@
     )
 
     INSERT INTO {{ this }} (
-        ProjectPKey, ProjectName, ProjectDescription, ProjectStatusCode, ProjectStatusDescription,
-        ProjectTypeCode, ProjectTypeDescription, ReportTypeDescription, IsEAC, IsStopDR,
-        ProjectManagerFirstName, ProjectManagerLastName, EffectiveDate, IsLatest,
-        ProjectCreateDate, ProjectUpdateDate, ProjectVersion, HvrChangeTime,
-        StageCreatedDatetime, StageLastUpdatedDatetime
+         ProjectPKey
+        ,ProjectName
+        ,ProjectDescription
+        ,ProjectStatusCode
+        ,ProjectStatusDescription
+        ,ProjectTypeCode
+        ,ProjectTypeDescription
+        ,ReportTypeDescription 
+        ,IsEAC
+        ,IsStopDR
+        ,ProjectManagerFirstName
+        ,ProjectManagerLastName 
+        ,EffectiveDate
+        ,IsLatest
+        ,ProjectCreateDate
+        ,ProjectUpdateDate
+        ,ProjectVersion
+        ,HvrChangeTime
+        ,StageCreatedDatetime
     )
     SELECT 
          ProjectPKey
@@ -102,7 +115,6 @@
         ,ProjectVersion
         ,HvrChangeTime
         ,StageCreatedDatetime
-        ,StageLastUpdatedDatetime    
     FROM 
         ProjectData
     WHERE 

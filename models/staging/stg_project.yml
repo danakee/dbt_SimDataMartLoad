@@ -110,10 +110,3 @@ models:
           current system date and time at the moment of record creation.
         data_type: datetimeoffset
         quote: true
-      - name: StageLastUpdatedDatetime
-        description: This column represents the date and time when the record was last
-          updated in the staging table. It is automatically populated with the
-          current system date and time at the moment of any update to the
-          record.
-        data_type: datetimeoffset
-        quote: true
