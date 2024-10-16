@@ -17,6 +17,8 @@ sources:
     tables:
       - name: tblEmployee
       - name: tblLocation
+      - name: tblLocationType
+      - name: tblRegion
 
   - name: sim2
     database: Sim2

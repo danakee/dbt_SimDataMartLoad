@@ -10,3 +10,4 @@ sources:
       - name: DimSimulator
       - name: DimSimulatorConfiguration
       - name: DimSimulatorQualification
+      - name: DimCenter
