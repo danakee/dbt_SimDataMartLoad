@@ -600,3 +600,186 @@ models:
         meta:
           sqlserver_default_constraint: true
         data_type: datetimeoffset
+  - name: dim_center
+    description: The 'dim_center' model is a dimension table that stores information
+      about different centers. It includes details such as the center's ID,
+      name, address, city, state, postal code, country, airport name, email
+      address, phone number, fax number, speed dial code, night phone number,
+      shop phone number, cell phone number, maintenance phone number, shipping
+      address, city, state, postal code, country, active status, location type
+      code, location type description, region, region description, manager's
+      first name, last name, email, change time, last updated datetime, primary
+      key, and created datetime. The model is updated using a merge operation,
+      which inserts new records and updates existing ones based on the primary
+      key. The process also logs the number of rows inserted, updated, and
+      deleted, as well as any errors that occur during execution.
+    columns:
+      - name: CenterKey
+        description: The unique identifier for each center in the target table. This is
+          a surrogate key and is not present in the source table.
+        data_type: int
+        quote: true
+      - name: CenterPKey
+        description: The primary key for each center in the source table. This is used
+          to match records in the source and target tables during the merge
+          process.
+        data_type: int
+        quote: true
+      - name: CenterID
+        description: The business identifier for each center. This is a natural key and
+          is present in both the source and target tables.
+        data_type: varchar
+        quote: true
+      - name: CenterName
+        description: The name of the center. This is a unique identifier for each center.
+        data_type: varchar
+        quote: true
+      - name: CenterAddress1
+        description: The first line of the center's address. This typically includes the
+          street number and name.
+        data_type: varchar
+        quote: true
+      - name: CenterAddress2
+        description: The second line of the center's address. This typically includes
+          the suite or apartment number, if applicable.
+        data_type: varchar
+        quote: true
+      - name: CenterCityName
+        description: The name of the city where the center is located.
+        data_type: varchar
+        quote: true
+      - name: CenterStateCode
+        description: The state code where the center is located.
+        data_type: varchar
+        quote: true
+      - name: CenterPostalCode
+        description: The postal code of the center's location.
+        data_type: varchar
+        quote: true
+      - name: CenterCountryName
+        description: The name of the country where the center is located.
+        data_type: varchar
+        quote: true
+      - name: CenterAirportName
+        description: The name of the nearest airport to the center.
+        data_type: varchar
+        quote: true
+      - name: CenterEmailAddress
+        description: The email address associated with the center.
+        data_type: varchar
+        quote: true
+      - name: CenterPhoneNumber
+        description: The primary phone number for the center. This is typically the main
+          line or reception.
+        data_type: varchar
+        quote: true
+      - name: CenterFaxNumber
+        description: The fax number for the center. This is used for sending and
+          receiving documents.
+        data_type: varchar
+        quote: true
+      - name: CenterSpeedDialCode
+        description: The speed dial code for the center. This is a short code used for
+          quick dialing.
+        data_type: varchar
+        quote: true
+      - name: CenterNightPhoneNumber
+        description: This column represents the night time contact phone number for the
+          center.
+        data_type: varchar
+        quote: true
+      - name: CenterShopPhoneNumber
+        description: This column represents the shop's contact phone number for the center.
+        data_type: varchar
+        quote: true
+      - name: CenterCellPhoneNumber
+        description: This column represents the cell phone number for the center.
+        data_type: varchar
+        quote: true
+      - name: CenterMaintenancePhoneNumber
+        description: This column stores the maintenance phone number for the center. It
+          is a string type and can contain alphanumeric characters.
+        data_type: varchar
+        quote: true
+      - name: CenterShippingAddress1
+        description: This column stores the first line of the shipping address for the
+          center. It is a string type and can contain alphanumeric characters.
+        data_type: varchar
+        quote: true
+      - name: CenterShippingAddress2
+        description: This column stores the second line of the shipping address for the
+          center. It is a string type and can contain alphanumeric characters.
+        data_type: varchar
+        quote: true
+      - name: CenterShippingCityName
+        description: The name of the city where the center is located for shipping purposes.
+        data_type: varchar
+        quote: true
+      - name: CenterShippingStateCode
+        description: The state code where the center is located for shipping purposes.
+        data_type: varchar
+        quote: true
+      - name: CenterShippingPostalCode
+        description: The postal code of the location where the center is located for
+          shipping purposes.
+        data_type: varchar
+        quote: true
+      - name: CenterShippingCountryName
+        description: The name of the country where the center's shipping address is located.
+        data_type: varchar
+        quote: true
+      - name: IsActive
+        description: A boolean value indicating whether the center is currently active
+          or not.
+        data_type: bit
+        quote: true
+      - name: CenterLocationTypeCode
+        description: A code representing the type of location where the center is situated.
+        data_type: varchar
+        quote: true
+      - name: CenterLocationTypeDescription
+        description: This column represents the description of the type of location for
+          the center. It is a string type field and can contain null values.
+        data_type: varchar
+        quote: true
+      - name: CenterRegion
+        description: This column represents the region in which the center is located.
+          It is a string type field and can contain null values.
+        data_type: varchar
+        quote: true
+      - name: CenterRegionDescription
+        description: This column represents the description of the region in which the
+          center is located. It is a string type field and can contain null
+          values.
+        data_type: varchar
+        quote: true
+      - name: CenterManagerFirstName
+        description: The first name of the center manager.
+        data_type: varchar
+        quote: true
+      - name: CenterManagerLastName
+        description: The last name of the center manager.
+        data_type: varchar
+        quote: true
+      - name: CenterManagerEmail
+        description: The email address of the center manager.
+        data_type: varchar
+        quote: true
+      - name: HvrChangeTime
+        description: This column represents the timestamp of the last change made to the
+          record in the source system. It is used to track changes in the source
+          system and is updated every time a change is made to the record.
+        data_type: datetimeoffset
+        quote: true
+      - name: EDWCreatedDatetime
+        description: This column represents the timestamp of when the record was first
+          created in the Enterprise Data Warehouse (EDW). It is automatically
+          populated when a new record is inserted into the EDW.
+        data_type: datetime
+        quote: true
+      - name: EDWLastUpdatedDatetime
+        description: This column represents the timestamp of the last update made to the
+          record in the EDW. It is automatically updated every time a change is
+          made to the record in the EDW.
+        data_type: datetime
+        quote: true
