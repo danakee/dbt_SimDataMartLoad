@@ -1,0 +1,69 @@
+models:
+  - name: stg_simulator_configuration
+    description: The stg_simulator_configuration model is a staging table that
+      stores the configuration details of a simulator. It includes columns for
+      the primary keys of the simulator and its configuration, the name of the
+      configuration, the location name, a flag indicating if the configuration
+      is the default, timestamps for when the source was created and last
+      updated, the change time from the HVR system, and timestamps for when the
+      staging record was created and last updated. The data is sourced from the
+      Sim2 and Employee2 databases, specifically the tblSim, tblObjectHier,
+      tblClassLink, tblConfig, and tblLocation tables. The model includes a
+      process for logging the execution of the data load, including the number
+      of rows inserted and deleted, and any errors that occurred.
+    columns:
+      - name: SimulatorConfigurationPKey
+        description: This is the primary key for the Simulator Configuration. It is a
+          unique identifier for each configuration in the simulator.
+        data_type: int
+        quote: true
+      - name: SimulatorPKey
+        description: This is the primary key for the Simulator. It is a unique
+          identifier for each simulator.
+        data_type: int
+        quote: true
+      - name: ConfigurationName
+        description: This is the name of the configuration in the simulator. It provides
+          a descriptive label for each configuration.
+        data_type: varchar
+        quote: true
+      - name: LocationName
+        description: The name of the location where the simulation is being run. This is
+          derived from the 'Employee2'.'dbo'.'tblLocation' table.
+        data_type: varchar
+        quote: true
+      - name: IsDefault
+        description: A boolean flag indicating whether the configuration is the default
+          one for the simulator. This is derived from the
+          'Sim2'.'dbo'.'tblConfig' table.
+        data_type: bit
+        quote: true
+      - name: SourceCreatedDatetime
+        description: The datetime when the source record was created. This is derived
+          from the 'Sim2'.'dbo'.'tblConfig' table.
+        data_type: datetime
+        quote: true
+      - name: SourceLastUpdatedDatetime
+        description: This column represents the last updated datetime of the source data
+          in the 'Sim2' database.
+        data_type: datetime
+        quote: true
+      - name: HvrChangeTime
+        description: This column represents the most recent change time across all the
+          source tables involved in the query. It is used to track changes in
+          the source data.
+        data_type: datetimeoffset
+        quote: true
+      - name: StageCreatedDatetime
+        description: This column represents the datetime when the staging process was
+          initiated. It is automatically set to the current system datetime when
+          the staging process begins.
+        data_type: datetimeoffset
+        quote: true
+      - name: StageLastUpdatedDatetime
+        description: This column represents the date and time when the staging table was
+          last updated. The value is automatically set to the current system
+          date and time whenever a new record is inserted into the staging
+          table.
+        data_type: datetimeoffset
+        quote: true

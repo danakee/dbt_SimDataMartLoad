@@ -1,0 +1,99 @@
+models:
+  - name: stg_simulator_qualification
+    description: The stg_simulator_qualification model is a staging table that holds
+      data related to simulator qualifications. It includes columns for the
+      primary keys of the simulator qualification, simulator configuration, and
+      simulator. It also contains information about the qualification agency,
+      qualification level, effective and expiry dates of the simulator
+      qualification, and a description of the simulator qualification.
+      Additional columns provide details about the process start date, scheduled
+      requalification date, initial simulator qualification date, and whether
+      the simulator qualification is deleted or hidden in reports. The model
+      also includes information about the qualification level, ACCircular, and
+      agency. Finally, it tracks the change time, creation time, and last update
+      time of the staging data.
+    columns:
+      - name: SimulatorQualificationPKey
+        data_type: int
+        quote: true
+      - name: SimulatorConfigurationPKey
+        data_type: int
+        quote: true
+      - name: SimulatorPKey
+        data_type: int
+        quote: true
+      - name: QualificationAgencyId
+        data_type: int
+        quote: true
+      - name: QualificationLevelId
+        data_type: int
+        quote: true
+      - name: SimulatorQualificationEffectiveDate
+        data_type: date
+        quote: true
+      - name: SimulatorQualificationExpiryDate
+        data_type: date
+        quote: true
+      - name: SimulatorQualificationDescription
+        data_type: varchar
+        quote: true
+      - name: SimulatorQualificationProcessStartDate
+        data_type: date
+        quote: true
+      - name: ScheduledRequalificationDate
+        data_type: date
+        quote: true
+      - name: InitialSimulatorQualificationDate
+        data_type: date
+        quote: true
+      - name: IsSimulatorQualificationDeleted
+        data_type: bit
+        quote: true
+      - name: OriginalSimulatorQualificationProjectName
+        data_type: varchar
+        quote: true
+      - name: IsHiddenInReport
+        data_type: bit
+        quote: true
+      - name: SimulatorQualificationLevelName
+        data_type: varchar
+        quote: true
+      - name: SimulatorQualificationLevelDescription
+        data_type: varchar
+        quote: true
+      - name: IsQualificationLevelApproved
+        data_type: bit
+        quote: true
+      - name: ACCircularName
+        data_type: varchar
+        quote: true
+      - name: IsACCircularApproved
+        data_type: bit
+        quote: true
+      - name: SimulatorQualificationAgencyName
+        data_type: varchar
+        quote: true
+      - name: SimulatorQualificationAgencyDescription
+        data_type: varchar
+        quote: true
+      - name: AgencySimulatorId
+        data_type: varchar
+        quote: true
+      - name: IsAgencyDomestic
+        data_type: bit
+        quote: true
+      - name: AgencySponsorCountryCode
+        data_type: int
+        quote: true
+      - name: IsAgencyDeleted
+        data_type: bit
+        quote: true
+      - name: HvrChangeTime
+        data_type: datetimeoffset
+        quote: true
+      - name: StageCreatedDatetime
+        data_type: datetimeoffset
+        quote: true
+      - name: StageLastUpdatedDatetime
+        data_type: datetimeoffset
+        quote: true

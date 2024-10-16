@@ -1,146 +1,602 @@
 version: 2
-
 models:
   - name: dim_project
-    description: "Project dimension table"
+    description: The 'dim_project' model is a dimension table in the
+      'SimulationsAnalytics' database. It contains information about various
+      projects, including their names, descriptions, status codes, type codes,
+      report type descriptions, and other related details. The data in this
+      table is updated using a MERGE operation, which inserts new records and
+      updates existing ones based on the 'ProjectPKey'. The model also logs the
+      number of rows inserted, updated, and deleted during each operation.
     columns:
       - name: ProjectKey
-        description: "Unique identifier for the project dimension - surrogate key"
-        data_tests:
-          - unique
-          - not_null
+        description: This is the primary key for the project. It is a unique identifier
+          for each project.
         meta:
           sqlserver_identity_insert: true
+        data_type: int
       - name: ProjectPKey
-        description: "Unique identifier for the project dimension - natural key"
-        data_tests:
-          - unique
-          - not_null
+        description: This is the parent key for the project. It is used to link related
+          projects together.
+        data_type: int
+      - name: ProjectName
+        description: This is the name of the project. It is a descriptive label for the
+          project.
+        data_type: varchar
+        quote: true
+      - name: ProjectDescription
+        description: This column contains a detailed description of the project. It
+          provides an overview of the project's purpose, goals, and key
+          features.
+        data_type: varchar
+        quote: true
+      - name: ProjectStatusCode
+        description: This column contains a code that represents the current status of
+          the project. The code is a numerical or alphanumerical representation
+          of the project's progress or state.
+        data_type: char
+        quote: true
+      - name: ProjectStatusDescription
+        description: This column contains a detailed description of the project's
+          current status. It provides an overview of the project's progress, any
+          issues or blockers, and next steps.
+        data_type: char
+        quote: true
+      - name: ProjectTypeCode
+        description: This column represents the unique code assigned to each type of
+          project. It is used for categorizing projects into different types.
+        data_type: varchar
+        quote: true
+      - name: ProjectTypeDescription
+        description: This column provides a detailed description of the project type. It
+          is derived from the ProjectTypeCode and provides more context about
+          the type of project.
+        data_type: varchar
+        quote: true
+      - name: ReportTypeDescription
+        description: This column contains a description of the type of report associated
+          with the project. It provides information about the format or
+          structure of the report.
+        data_type: varchar
+        quote: true
+      - name: IsEAC
+        description: A boolean flag indicating whether the project is an EAC (Estimate
+          at Completion) project. If true, the project is an EAC project. If
+          false, the project is not an EAC project.
+        data_type: bit
+        quote: true
+      - name: IsStopDR
+        description: A boolean flag indicating whether the project has a stop DR
+          (Disaster Recovery) status. If true, the project has a stop DR status.
+          If false, the project does not have a stop DR status.
+        data_type: bit
+        quote: true
+      - name: ProjectManagerFirstName
+        description: The first name of the project manager assigned to the project. This
+          is a string value.
+        data_type: varchar
+        quote: true
+      - name: ProjectManagerLastName
+        description: The last name of the project manager assigned to the project.
+        data_type: varchar
+        quote: true
+      - name: EffectiveDate
+        description: The date when the project became effective or started.
+        data_type: datetime
+        quote: true
+      - name: IsLatest
+        description: A boolean flag indicating whether the project is the latest version
+          or not.
+        data_type: bit
+        quote: true
+      - name: ProjectCreateDate
+        description: The date when the project was initially created. This is a
+          timestamp field and includes both date and time.
+        data_type: datetime
+        quote: true
+      - name: ProjectUpdateDate
+        description: The date when the project was last updated. This is a timestamp
+          field and includes both date and time.
+        data_type: datetime
+        quote: true
+      - name: ProjectVersion
+        description: The version of the project. This field is updated each time a
+          significant change is made to the project.
+        data_type: int
+        quote: true
+      - name: HvrChangeTime
+        description: This column represents the time when the last change was made in
+          the source system. It is used to track changes in the source data over
+          time.
+        data_type: datetimeoffset
+        quote: true
       - name: EDWCreatedDatetime
-        description: "Date and time when the record was created in the data warehouse"
-        data_tests:
-          - not_null
+        description: This column represents the date and time when the record was first
+          created in the Enterprise Data Warehouse (EDW). It is used to track
+          the lifecycle of data in the EDW.
         meta:
           sqlserver_default_constraint: true
+        data_type: datetimeoffset
       - name: EDWLastUpdatedDatetime
-        description: "Date and time when the record was last updated in the data warehouse"
-        data_tests:
-          - not_null
+        description: This column represents the date and time when the record was last
+          updated in the Enterprise Data Warehouse (EDW). It is used to track
+          the lifecycle of data in the EDW.
         meta:
           sqlserver_default_constraint: true
-
+        data_type: datetimeoffset
   - name: dim_user
-    description: "User dimension table"
+    description: The 'dim_user' model is a dimension table in the
+      'SimulationsAnalytics' database. It contains information about users,
+      including their employee number, first and last names, and the time of the
+      last change. The data in this table is updated from the 'StageUser' table
+      in the 'SimulationsAnalyticsStage' database. The update process includes
+      logging and error handling. If a matching record is found in the
+      'dim_user' table, the record is updated. If no match is found, a new
+      record is inserted. The process also logs the number of inserted, updated,
+      and deleted records, as well as any errors that occur during the process.
     columns:
       - name: UserKey
-        description: "Unique identifier for the user dimension - surrogate key"
-        data_tests:
-          - unique
-          - not_null
+        description: Unique identifier for the user dimension - surrogate key
         meta:
           sqlserver_identity_insert: true
+        data_type: int
       - name: EmployeePKey
-        description: "Unique identifier for the user dimension - natural key"
-        data_tests:
-          - unique
-          - not_null
-      - name: EDWCreatedDatetime
-        description: "Date and time when the record was created in the data warehouse"
-        data_tests:
-          - not_null
-        meta:
-          sqlserver_default_constraint: true
-      - name: EDWLastUpdatedDatetime
-        description: "Date and time when the record was last updated in the data warehouse"
-        data_tests:
-          - not_null
-        meta:
-          sqlserver_default_constraint: true
+        description: Unique identifier for the user dimension - natural key
+        data_type: int
       - name: EmployeeNumber
-        description: "Users employee number"
-        #data_tests:
-        #  - dim_user_duplicate_employee_number
-
+        description: Users employee number
+        data_type: int
+      - name: UserFirstName
+        description: The first name of the user. This is a string field that can contain
+          any alphanumeric characters.
+        data_type: varchar
+        quote: true
+      - name: UserLastName
+        description: The last name of the user. This is a string field that can contain
+          any alphanumeric characters.
+        data_type: varchar
+        quote: true
+      - name: HvrChangeTime
+        description: The time when the last change was made to the user's record. This
+          is a datetime field.
+        data_type: datetimeoffset
+        quote: true
+      - name: EDWCreatedDatetime
+        description: Date and time when the record was created in the data warehouse
+        meta:
+          sqlserver_default_constraint: true
+        data_type: datetimeoffset
+      - name: EDWLastUpdatedDatetime
+        description: Date and time when the record was last updated in the data warehouse
+        meta:
+          sqlserver_default_constraint: true
+        data_type: datetimeoffset
   - name: dim_simulator
-    description: "Simulator dimension table"
+    description: The 'dim_simulator' model is a dimension table in the
+      'SimulationsAnalytics' database. It contains various columns related to
+      simulators such as 'SimulatorId', 'SimulatorName', 'SourceCreatedDate',
+      'SourceLastUpdatedDate', 'FSIAssetNumber', 'LocationId', 'LeadLocationId',
+      'DestinationId', 'IsILS', 'DateReadyForTraining', 'SimulatorTypeKey',
+      'SimulatorTypeName', 'AircraftModelKey', 'AircraftModelCode',
+      'AircraftModelName', 'AircraftModelTypeValue', 'AircraftTypeName',
+      'AircraftTypeDescription', 'StatusKey', 'StatusName', 'TrackLostTime',
+      'SimulatorGroupKey', 'SimulatorGroupName', 'SimulatorGroupDescription',
+      'ShipDate', 'OwnerId', 'OwnerCustomerId', 'OwnerDescription',
+      'ManufacturerId', 'ManufacturerName', 'HvrChangeTime',
+      'EDWLastUpdatedDatetime', 'SimulatorPKey', 'EDWCreatedDatetime'. The data
+      in this table is updated using a MERGE statement, which inserts new
+      records and updates existing ones based on the 'SimulatorPKey'. The
+      process of updating this table is logged in the 'DBTProcessExecutionLog'
+      table in the 'SimulationsAnalyticsLogging' database.
     columns:
       - name: SimulatorKey
-        description: "Unique identifier for the simulator dimension - surrogate key"
-        data_tests:
-          - unique
-          - not_null
+        description: Unique identifier for the simulator dimension - surrogate key
         meta:
           sqlserver_identity_insert: true
+        data_type: int
       - name: SimulatorPKey
-        description: "Unique identifier for the simulator dimension - natural key"
-        data_tests:
-          - unique
-          - not_null
+        description: Unique identifier for the simulator dimension - natural key
+        data_type: int
+      - name: SimulatorId
+        description: The unique identifier for each simulator.
+        data_type: int
+        quote: true
+      - name: SimulatorName
+        description: The name of the simulator.
+        data_type: varchar
+        quote: true
+      - name: SourceCreatedDate
+        description: The date when the source data was created.
+        data_type: datetime
+        quote: true
+      - name: SourceLastUpdatedDate
+        description: The date and time when the source data was last updated. This is
+          used to track changes in the source data over time.
+        data_type: datetime
+        quote: true
+      - name: FSIAssetNumber
+        description: The unique identifier for the asset in the Flight Safety
+          International system. This is used to track the asset across different
+          systems and databases.
+        data_type: nvarchar
+        quote: true
+      - name: LocationId
+        description: The unique identifier for the location where the simulator is
+          installed. This is used to track the physical location of the
+          simulator.
+        data_type: int
+        quote: true
+      - name: LeadLocationId
+        description: The unique identifier for the lead location of the simulator.
+        data_type: int
+        quote: true
+      - name: DestinationId
+        description: The unique identifier for the destination of the simulator.
+        data_type: int
+        quote: true
+      - name: IsILS
+        description: A boolean flag indicating whether the simulator is an Instrument
+          Landing System (ILS).
+        data_type: int
+        quote: true
+      - name: DateReadyForTraining
+        description: The date when the simulator is ready for training. This is a
+          datetime field.
+        data_type: datetime
+        quote: true
+      - name: SimulatorTypeKey
+        description: The unique identifier for the type of simulator. This is an integer
+          field.
+        data_type: int
+        quote: true
+      - name: SimulatorTypeName
+        description: The name of the type of simulator. This is a string field.
+        data_type: varchar
+        quote: true
+      - name: AircraftModelKey
+        description: A unique identifier for the aircraft model. This is a primary key
+          in the database.
+        data_type: int
+        quote: true
+      - name: AircraftModelCode
+        description: The code associated with the aircraft model. This is a unique
+          alphanumeric value that represents a specific model of aircraft.
+        data_type: varchar
+        quote: true
+      - name: AircraftModelName
+        description: The name of the aircraft model. This is a descriptive field that
+          provides the common name for the model of aircraft.
+        data_type: varchar
+        quote: true
+      - name: AircraftModelTypeValue
+        description: This column represents the type value of the aircraft model
+          associated with the simulator.
+        data_type: int
+        quote: true
+      - name: AircraftTypeName
+        description: This column represents the name of the aircraft type associated
+          with the simulator.
+        data_type: varchar
+        quote: true
+      - name: AircraftTypeDescription
+        description: This column represents the description of the aircraft type
+          associated with the simulator.
+        data_type: varchar
+        quote: true
+      - name: StatusKey
+        description: This is a unique identifier for the status of the simulator. It is
+          an integer value that is used as a foreign key in other tables to
+          reference the status of the simulator.
+        data_type: int
+        quote: true
+      - name: StatusName
+        description: This is the name of the status of the simulator. It is a string
+          value that provides a human-readable name for the status of the
+          simulator.
+        data_type: varchar
+        quote: true
+      - name: TrackLostTime
+        description: This is a boolean value that indicates whether the simulator is
+          currently tracking lost time. If true, the simulator is tracking lost
+          time. If false, it is not.
+        data_type: int
+        quote: true
+      - name: SimulatorGroupKey
+        description: A unique identifier for the simulator group. This is a primary key
+          in the database.
+        data_type: int
+        quote: true
+      - name: SimulatorGroupName
+        description: The name of the simulator group. This is a descriptive field that
+          provides more context about the group.
+        data_type: varchar
+        quote: true
+      - name: SimulatorGroupDescription
+        description: A detailed description of the simulator group. This field provides
+          additional information about the group, such as its purpose or
+          characteristics.
+        data_type: varchar
+        quote: true
+      - name: ShipDate
+        description: The date when the simulator was shipped.
+        data_type: datetime
+        quote: true
+      - name: OwnerId
+        description: The unique identifier of the owner of the simulator.
+        data_type: int
+        quote: true
+      - name: OwnerCustomerId
+        description: The unique customer identifier of the owner of the simulator.
+        data_type: varchar
+        quote: true
+      - name: OwnerDescription
+        description: This column contains the description of the owner of the simulator.
+        data_type: varchar
+        quote: true
+      - name: ManufacturerId
+        description: This column contains the unique identifier of the manufacturer of
+          the simulator.
+        data_type: varchar
+        quote: true
+      - name: ManufacturerName
+        description: This column contains the name of the manufacturer of the simulator.
+        data_type: varchar
+        quote: true
+      - name: HvrChangeTime
+        description: This column represents the time when the last change was made in
+          the HVR system. It is used to track changes and updates in the system.
+        data_type: datetimeoffset
+        quote: true
       - name: EDWCreatedDatetime
-        description: "Date and time when the record was created in the data warehouse"
-        data_tests:
-          - not_null
+        description: Date and time when the record was created in the data warehouse
         meta:
           sqlserver_default_constraint: true
+        data_type: datetimeoffset
       - name: EDWLastUpdatedDatetime
-        description: "Date and time when the record was last updated in the data warehouse"
-        data_tests:
-          - not_null
+        description: Date and time when the record was last updated in the data warehouse
         meta:
           sqlserver_default_constraint: true
-
+        data_type: datetimeoffset
   - name: dim_simulator_configuration
-    description: "Simulator configuration dimension table"
+    description: The 'dim_simulator_configuration' model is a dimension table that
+      stores configuration details for different simulators. It includes keys
+      for the simulator configuration, the simulator itself, and the primary key
+      for the configuration. It also stores the configuration name, location
+      name, and a flag indicating if it is the default configuration.
+      Additionally, it keeps track of when the source data was created and last
+      updated, as well as when the data was last changed in the HVR system.
+      Finally, it records when the data was created and last updated in the EDW
+      system.
     columns:
       - name: SimulatorConfigurationKey
-        description: "Unique identifier for the simulator configuration dimension - surrogate key"
-        data_tests:
-          - unique
-          - not_null
+        description: Unique identifier for the simulator configuration dimension -
+          surrogate key
         meta:
           sqlserver_identity_insert: true
+        data_type: int
       - name: SimulatorConfigurationPKey
-        description: "Unique identifier for the simulator configuration dimension - natural key"
-        data_tests:
-          - unique
-          - not_null
+        description: Unique identifier for the simulator configuration dimension -
+          natural key
+        data_type: int
+      - name: SimulatorPKey
+        data_type: int
+        quote: true
+        description: The primary key of the simulator. This is a unique identifier for
+          each simulator.
+      - name: ConfigurationName
+        data_type: varchar
+        quote: true
+        description: The name of the configuration for the simulator. This provides
+          details about the specific setup of the simulator.
+      - name: LocationName
+        data_type: varchar
+        quote: true
+        description: The name of the location where the simulator is set up. This
+          provides information about the physical location of the simulator.
+      - name: IsDefault
+        data_type: bit
+        quote: true
+        description: This column indicates whether the simulator configuration is the
+          default one. It is a boolean value where '1' indicates that it is the
+          default configuration and '0' indicates otherwise.
+      - name: SourceCreatedDatetime
+        data_type: datetime
+        quote: true
+        description: This column records the date and time when the simulator
+          configuration was initially created in the source system. It is stored
+          in the datetime format.
+      - name: SourceLastUpdatedDatetime
+        data_type: datetime
+        quote: true
+        description: This column records the date and time when the simulator
+          configuration was last updated in the source system. It is stored in
+          the datetime format.
+      - name: HvrChangeTime
+        data_type: datetimeoffset
+        quote: true
+        description: This column represents the time when the last change was made in
+          the source system. It is used to track changes in the source data over
+          time.
       - name: EDWCreatedDatetime
-        description: "Date and time when the record was created in the data warehouse"
-        data_tests:
-          - not_null
+        description: Date and time when the record was created in the data warehouse
         meta:
           sqlserver_default_constraint: true
+        data_type: datetimeoffset
       - name: EDWLastUpdatedDatetime
-        description: "Date and time when the record was last updated in the data warehouse"
-        data_tests:
-          - not_null
+        description: Date and time when the record was last updated in the data warehouse
         meta:
           sqlserver_default_constraint: true
-
+        data_type: datetimeoffset
   - name: dim_simulator_qualification
-    description: "Simulator qualification dimension table"
+    description: The 'dim_simulator_qualification' model is a dimension table that
+      contains information about the qualification of simulators. It includes
+      details such as the primary key of the simulator qualification, the
+      primary key of the simulator configuration, the primary key of the
+      simulator, the ID of the qualification agency, the ID of the qualification
+      level, the effective and expiry dates of the simulator qualification, a
+      description of the simulator qualification, the start date of the
+      qualification process, the scheduled requalification date, the initial
+      qualification date of the simulator, whether the simulator qualification
+      is deleted, the original project name of the simulator qualification,
+      whether the qualification is hidden in the report, the name and
+      description of the qualification level, whether the qualification level is
+      approved, the name of the AC circular, whether the AC circular is
+      approved, the name and description of the qualification agency, the ID of
+      the agency simulator, whether the agency is domestic, the country code of
+      the agency sponsor, whether the agency is deleted, the change time of the
+      HVR, and the created and last updated datetime of the EDW.
     columns:
       - name: SimulatorQualificationKey
-        description: "Unique identifier for the simulator qualification dimension - surrogate key"
-        data_tests:
-          - unique
-          - not_null
+        description: Unique identifier for the simulator qualification dimension -
+          surrogate key
         meta:
           sqlserver_identity_insert: true
+        data_type: int
       - name: SimulatorQualificationPKey
-        description: "Unique identifier for the simulator qualification dimension - natural key"
-        data_tests:
-          - unique
-          - not_null
+        description: Unique identifier for the simulator qualification dimension -
+          natural key
+        data_type: int
+      - name: SimulatorConfigurationPKey
+        description: Primary key of the simulator configuration. This is a unique
+          identifier used to reference a specific simulator configuration.
+        data_type: int
+        quote: true
+      - name: SimulatorPKey
+        description: Primary key of the simulator. This is a unique identifier used to
+          reference a specific simulator.
+        data_type: int
+        quote: true
+      - name: QualificationAgencyId
+        description: Identifier for the qualification agency. This is used to reference
+          a specific agency responsible for the qualification of the simulator.
+        data_type: int
+        quote: true
+      - name: QualificationLevelId
+        description: This column represents the unique identifier for the qualification
+          level of the simulator.
+        data_type: int
+        quote: true
+      - name: SimulatorQualificationEffectiveDate
+        description: This column represents the date when the simulator qualification
+          becomes effective.
+        data_type: date
+        quote: true
+      - name: SimulatorQualificationExpiryDate
+        description: This column represents the date when the simulator qualification
+          expires.
+        data_type: date
+        quote: true
+      - name: SimulatorQualificationDescription
+        description: This column contains the description of the simulator
+          qualification. It provides detailed information about the specific
+          qualification of the simulator.
+        data_type: varchar
+        quote: true
+      - name: SimulatorQualificationProcessStartDate
+        description: This column contains the start date of the simulator qualification
+          process. It indicates when the process of qualifying the simulator
+          began.
+        data_type: date
+        quote: true
+      - name: ScheduledRequalificationDate
+        description: This column contains the date for the scheduled requalification of
+          the simulator. It indicates when the simulator is due for its next
+          qualification review.
+        data_type: date
+        quote: true
+      - name: InitialSimulatorQualificationDate
+        description: The date when the simulator was initially qualified. This is a
+          datetime field.
+        data_type: date
+        quote: true
+      - name: IsSimulatorQualificationDeleted
+        description: A boolean field indicating whether the simulator qualification has
+          been deleted. 'True' means it has been deleted, 'False' means it is
+          still active.
+        data_type: bit
+        quote: true
+      - name: OriginalSimulatorQualificationProjectName
+        description: The name of the original project under which the simulator
+          qualification was created. This is a string field.
+        data_type: varchar
+        quote: true
+      - name: IsHiddenInReport
+        description: A boolean flag indicating whether the simulator qualification is
+          hidden in the report. If true, the qualification will not be visible
+          in the report.
+        data_type: bit
+        quote: true
+      - name: SimulatorQualificationLevelName
+        description: The name of the simulator qualification level. This is a
+          descriptive name that identifies the level of qualification for the
+          simulator.
+        data_type: varchar
+        quote: true
+      - name: SimulatorQualificationLevelDescription
+        description: A detailed description of the simulator qualification level. This
+          provides additional information about what the qualification level
+          entails.
+        data_type: varchar
+        quote: true
+      - name: IsQualificationLevelApproved
+        description: A boolean flag indicating whether the qualification level has been
+          approved.
+        data_type: bit
+        quote: true
+      - name: ACCircularName
+        description: The name of the Advisory Circular (AC) associated with the
+          simulator qualification.
+        data_type: varchar
+        quote: true
+      - name: IsACCircularApproved
+        description: A boolean flag indicating whether the associated Advisory Circular
+          (AC) has been approved.
+        data_type: bit
+        quote: true
+      - name: SimulatorQualificationAgencyName
+        description: The name of the agency that provided the qualification for the
+          simulator.
+        data_type: varchar
+        quote: true
+      - name: SimulatorQualificationAgencyDescription
+        description: A detailed description of the agency that provided the
+          qualification for the simulator.
+        data_type: varchar
+        quote: true
+      - name: AgencySimulatorId
+        description: The unique identifier assigned to the simulator by the
+          qualification agency.
+        data_type: varchar
+        quote: true
+      - name: IsAgencyDomestic
+        description: A boolean flag indicating whether the agency is domestic or not.
+          '1' indicates a domestic agency, '0' indicates a non-domestic agency.
+        data_type: bit
+        quote: true
+      - name: AgencySponsorCountryCode
+        description: The country code of the agency's sponsor. This is a string value
+          representing the ISO country code.
+        data_type: int
+        quote: true
+      - name: IsAgencyDeleted
+        description: A boolean flag indicating whether the agency has been deleted or
+          not. '1' indicates the agency has been deleted, '0' indicates the
+          agency is active.
+        data_type: bit
+        quote: true
+      - name: HvrChangeTime
+        description: This column represents the timestamp of the last change made to the
+          record in the source system. It is used to track changes and updates
+          in the data.
+        data_type: datetimeoffset
+        quote: true
       - name: EDWCreatedDatetime
-        description: "Date and time when the record was created in the data warehouse"
-        data_tests:
-          - not_null
+        description: Date and time when the record was created in the data warehouse
         meta:
           sqlserver_default_constraint: true
+        data_type: datetimeoffset
       - name: EDWLastUpdatedDatetime
-        description: "Date and time when the record was last updated in the data warehouse"
-        data_tests:
-          - not_null
+        description: Date and time when the record was last updated in the data warehouse
         meta:
           sqlserver_default_constraint: true
+        data_type: datetimeoffset

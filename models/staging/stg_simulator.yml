@@ -1,0 +1,119 @@
+models:
+  - name: stg_simulator
+    description: The stg_simulator model is a staging table that holds data related
+      to simulators. It includes columns for the simulator's primary key, ID,
+      name, creation date, last updated date, asset number, location ID, lead
+      location ID, destination ID, ILS status, date ready for training,
+      simulator type key, simulator type name, aircraft model key, aircraft
+      model code, aircraft model name, aircraft model type value, aircraft type
+      name, aircraft type description, status key, status name, track lost time,
+      simulator group key, simulator group name, simulator group description,
+      ship date, owner ID, owner customer ID, owner description, manufacturer
+      ID, manufacturer name, change time, stage created datetime, and stage last
+      updated datetime. The data is sourced from multiple tables in the Sim2
+      database and is inserted into the SimulationsAnalyticsStage database. The
+      model also logs the process execution and updates the StageTableLastUpdate
+      table with the last updated timestamp.
+    columns:
+      - name: SimulatorPKey
+        data_type: int
+        quote: true
+      - name: SimulatorId
+        data_type: int
+        quote: true
+      - name: SimulatorName
+        data_type: varchar
+        quote: true
+      - name: SourceCreatedDate
+        data_type: datetime
+        quote: true
+      - name: SourceLastUpdatedDate
+        data_type: datetime
+        quote: true
+      - name: FSIAssetNumber
+        data_type: nvarchar
+        quote: true
+      - name: LocationId
+        data_type: int
+        quote: true
+      - name: LeadLocationId
+        data_type: int
+        quote: true
+      - name: DestinationId
+        data_type: int
+        quote: true
+      - name: IsILS
+        data_type: int
+        quote: true
+      - name: DateReadyForTraining
+        data_type: datetime
+        quote: true
+      - name: SimulatorTypeKey
+        data_type: int
+        quote: true
+      - name: SimulatorTypeName
+        data_type: varchar
+        quote: true
+      - name: AircraftModelKey
+        data_type: int
+        quote: true
+      - name: AircraftModelCode
+        data_type: varchar
+        quote: true
+      - name: AircraftModelName
+        data_type: varchar
+        quote: true
+      - name: AircraftModelTypeValue
+        data_type: int
+        quote: true
+      - name: AircraftTypeName
+        data_type: varchar
+        quote: true
+      - name: AircraftTypeDescription
+        data_type: varchar
+        quote: true
+      - name: StatusKey
+        data_type: int
+        quote: true
+      - name: StatusName
+        data_type: varchar
+        quote: true
+      - name: TrackLostTime
+        data_type: int
+        quote: true
+      - name: SimulatorGroupKey
+        data_type: int
+        quote: true
+      - name: SimulatorGroupName
+        data_type: varchar
+        quote: true
+      - name: SimulatorGroupDescription
+        data_type: varchar
+        quote: true
+      - name: ShipDate
+        data_type: datetime
+        quote: true
+      - name: OwnerId
+        data_type: int
+        quote: true
+      - name: OwnerCustomerId
+        data_type: varchar
+        quote: true
+      - name: OwnerDescription
+        data_type: varchar
+        quote: true
+      - name: ManufacturerId
+        data_type: varchar
+        quote: true
+      - name: ManufacturerName
+        data_type: varchar
+        quote: true
+      - name: HvrChangeTime
+        data_type: datetimeoffset
+        quote: true
+      - name: StageCreatedDatetime
+        data_type: datetimeoffset
+        quote: true
+      - name: StageLastUpdatedDatetime
+        data_type: datetimeoffset
+        quote: true
