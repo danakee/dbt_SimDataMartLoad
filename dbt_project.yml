@@ -48,9 +48,6 @@ quoting:
   schema: true
   identifier: true
 
-vars:
-  python_version: "3.12.6"
-
 on-run-start:  
   - "{{ validate_command_line() }}"
   - "{{ log_run_parameters_start() }}"

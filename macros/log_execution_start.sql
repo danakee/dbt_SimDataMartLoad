@@ -3,6 +3,21 @@
 
 {% macro log_execution_start() %}
 
+    -- Fetch SQL Server specific information
+    {% set sql_server_info %}
+        SELECT 
+            @@SERVERNAME AS TargetSQLServer,
+            @@VERSION AS SQLServerVersion,
+            @@MICROSOFTVERSION AS MicrosoftVersion
+    {% endset %}
+
+    {% set sql_server_results = run_query(sql_server_info) %}
+    {% if execute %}
+        {% set sql_server_data = sql_server_results.rows[0] %}
+    {% else %}
+        {% set sql_server_data = ['Unknown', 'Unknown', 'Unknown'] %}
+    {% endif %}
+
     -- Create the INSERT statement to log the start of the execution
     {% set insert_statement %}
         INSERT INTO {{ source('logging', 'DBTExecutionLog') }} (
@@ -11,7 +26,12 @@
             StartDateTime,
             UserName,
             TargetName,
+            TargetSQLServer,
+            SQLServerVersion,
+            MicrosoftVersion,
+            ClientComputerName,
             DBTVersion,
+            DBTSQLServerVersion,
             PythonVersion,
             CompletionStatus
         )
@@ -21,8 +41,13 @@
             SYSDATETIMEOFFSET(),
             SUSER_NAME(),
             '{{ target.name }}',
+            '{{ sql_server_data[0] }}',
+            '{{ sql_server_data[1] }}',
+            '{{ sql_server_data[2] }}',
+            '{{ env_var("COMPUTERNAME", "Unknown") }}',
             '{{ dbt_version }}',
-            '{{ var("python_version") }}',
+            '{{ env_var("DBT_SQLSERVER_VERSION", "Unknown") }}',            
+            '{{ env_var("DBT_PYTHON_VERSION", "Unknown") }}',
             'Incomplete'
         );
     {% endset %}
