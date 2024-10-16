@@ -1,4 +1,4 @@
 {
     "turntable.dbtVersion": "1.8",
-    "dbt.enableNewLineagePanel": true
+    "dbt.enableNewLineagePanel": false
 }
