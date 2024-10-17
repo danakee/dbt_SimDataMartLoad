@@ -17,7 +17,7 @@
             ,(SELECT MAX(ct) FROM (VALUES 
                 (big.hvr_change_time), 
                 (bi.hvr_change_time)
-            ) AS ChangeTime(ct))    AS hvr_change_time
+            ) AS ChangeTime(ct))    AS HvrChangeTime
         FROM 
             {{ source('eac_report', 'MaterialBudgetItem') }} AS bi
             LEFT OUTER JOIN {{ source('eac_report', 'MaterialBudgetItemGroup') }} AS big
@@ -25,7 +25,7 @@
         WHERE 
             big.PKey BETWEEN 1 AND 7
 
-        UNION
+        UNION ALL
 
         SELECT 
              'Labor'                        AS BudgetCategoryTypeCode
@@ -35,7 +35,7 @@
             ,(SELECT MAX(ct) FROM (VALUES 
                 (d.hvr_change_time), 
                 (p.hvr_change_time)
-            ) AS ChangeTime(ct))            AS hvr_change_time
+            ) AS ChangeTime(ct))            AS HvrChangeTime
         FROM 
             {{ source('eac_report', 'EacDept') }} AS d
             LEFT OUTER JOIN {{ source('eac_report', 'DeptPool') }} AS p
@@ -48,7 +48,7 @@
             ,'ALL'                          AS BudgetCategoryName
             ,'ALL'                          AS BudgetItemCode
             ,'Roll-up for category type'    AS BudgetItemName
-            ,MAX(hvr_change_time)           AS hvr_change_time
+            ,MAX(HvrChangeTime)             AS HvrChangeTime
         FROM 
             SourceBudgetData AS sbd
         WHERE NOT EXISTS (
@@ -70,7 +70,7 @@
             ,BudgetCategoryName
             ,'ALL'                          AS BudgetItemCode
             ,'Roll-up for category level'   AS BudgetItemName
-            ,MAX(hvr_change_time)           AS hvr_change_time
+            ,MAX(HvrChangeTime)             AS HvrChangeTime
         FROM 
             SourceBudgetData AS sbd
         WHERE NOT EXISTS (
@@ -89,9 +89,9 @@
 
     BudgetHierarchy AS (
         SELECT * FROM SourceBudgetData
-        UNION ALL
+        UNION
         SELECT * FROM BudgetCategoryAll
-        UNION ALL
+        UNION
         SELECT * FROM BudgetItemAll
     )
 
@@ -108,12 +108,12 @@
         ,BudgetCategoryName
         ,BudgetItemCode
         ,BudgetItemName
-        ,hvr_change_time                                AS HvrChangeTime
+        ,HvrChangeTime
         ,CAST(sysdatetimeoffset() AS datetimeoffset(3)) AS StageCreatedDatetime
     FROM 
         BudgetHierarchy
     WHERE 
-        hvr_change_time > '{{ get_stage_last_update(this.name) }}';
+        HvrChangeTime > '{{ get_stage_last_update(this.name) }}';
 {% endset %}
 
 {{ load_stage_table(
