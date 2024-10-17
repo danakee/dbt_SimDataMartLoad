@@ -1,15 +1,15 @@
 version: 2
 
 sources:
-  - name: project2
-    database: Project2
+  - name: eac_report
+    database: EAC_Report
     schema: dbo
     tables:
-      - name: tblProject
-      - name: tblStatus
-      - name: tblProjType
-      - name: tblAccountingType
-      - name: tblProjPMXref
+      - name: MaterialBudgetItem
+      - name: MaterialBudgetItemGroup
+      - name: EACDept
+      - name: DeptPool
+      - name: EAC_Groups
 
   - name: employee2
     database: Employee2
@@ -19,6 +19,36 @@ sources:
       - name: tblLocation
       - name: tblLocationType
       - name: tblRegion
+      - name: tblDepartment
+      - name: tblDivision 
+      - name: tblEmpJobTitle
+      - name: tblDeptGroup
+
+  - name: fsi_issues2
+    database: FSI_Issues2
+    schema: dbo
+    tables:
+      - name: tblIssueObjectXref
+      - name: tblClassLink
+      - name: tblIssue
+      - name: tblStatus
+      - name: tblClassification
+      - name: tblLostTimeType
+      - name: tblPriority
+      - name: tblIssueCategory
+      - name: tblIssue_Trng_Category
+      - name: tblCause
+      - name: tblRootCauseType
+
+  - name: project2
+    database: Project2
+    schema: dbo
+    tables:
+      - name: tblProject
+      - name: tblStatus
+      - name: tblProjType
+      - name: tblAccountingType
+      - name: tblProjPMXref
 
   - name: sim2
     database: Sim2
@@ -35,17 +65,10 @@ sources:
       - name: tblMfg
       - name: tblObjectHier
       - name: tblOwner
+      - name: tblProjSimXref
       - name: tblSim
       - name: tblSimGroup
       - name: tblSimType
       - name: tblSimTypeGroup
       - name: tblStatus
-
-  - name: eac_report
-    database: EAC_Report
-    schema: dbo
-    tables:
-      - name: MaterialBudgetItem
-      - name: MaterialBudgetItemGroup
-      - name: EacDept
-      - name: DeptPool
+      - name: tblSystems

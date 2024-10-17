@@ -37,7 +37,7 @@
                 (p.hvr_change_time)
             ) AS ChangeTime(ct))            AS HvrChangeTime
         FROM 
-            {{ source('eac_report', 'EacDept') }} AS d
+            {{ source('eac_report', 'EACDept') }} AS d
             LEFT OUTER JOIN {{ source('eac_report', 'DeptPool') }} AS p
                 ON d.DeptPoolId = p.PKey
     ),
@@ -122,7 +122,7 @@
     source_tables=[
         "eac_report.MaterialBudgetItem",
         "eac_report.MaterialBudgetItemGroup",
-        "eac_report.EacDept",
+        "eac_report.EACDept",
         "eac_report.DeptPool"
     ],
     unique_key=["BudgetCategoryTypeCode", "BudgetCategoryName", "BudgetItemCode"]
