@@ -155,6 +155,7 @@
         SELECT 
             @RowsInserted = ISNULL(SUM(CASE WHEN MergeAction = 'INSERT' THEN AffectedRows END), 0),
             @RowsUpdated = ISNULL(SUM(CASE WHEN MergeAction = 'UPDATE' THEN AffectedRows END), 0)
+            --@RowsDeleted = ISNULL(SUM(CASE WHEN MergeAction = 'DELETE' THEN AffectedRows END), 0)
         FROM @MergeResults;
 
         SELECT @FinalRowCount = COUNT(*) FROM {{ target_table }};
@@ -185,9 +186,9 @@ ErrorHandler:
         SET
             ExecutionStatus   = @ExecutionStatus,
             ExecutionMessage  = @ExecutionMessage,
+            RowsDeleted       = @RowsDeleted,
             RowsInserted      = @RowsInserted,
             RowsUpdated       = @RowsUpdated,
-            RowsDeleted       = @RowsDeleted,
             FinalRowCount     = @FinalRowCount,
             ProcessEndTime    = sysdatetimeoffset(),
             ErrorNumber       = @ErrorNumber,
