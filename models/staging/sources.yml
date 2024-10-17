@@ -40,3 +40,12 @@ sources:
       - name: tblSimType
       - name: tblSimTypeGroup
       - name: tblStatus
+
+  - name: eac_report
+    database: EAC_Report
+    schema: dbo
+    tables:
+      - name: MaterialBudgetItem
+      - name: MaterialBudgetItemGroup
+      - name: EacDept
+      - name: DeptPool
