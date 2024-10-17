@@ -1,8 +1,8 @@
--- macros/merge_dimension.sql
 {% macro merge_dimension(target_table, source_table, unique_key, columns_to_update, columns_to_insert) %}
+
     /*
     This macro is used to merge data from a source table into a target table.
-    The merge is done using the unique key provided and the columns to update and insert.
+    The merge is done using the unique key provided (single or composite) and the columns to update and insert.
     The macro also logs the process in the ProcessExecutionLog table in the SimulationsAnalyticsLogging database.
     */
     
@@ -90,7 +90,14 @@
                 HvrChangeTime > (SELECT ISNULL(MAX(HvrChangeTime), '1900-01-01') FROM {{ target_table }})
             {% endif %}
             ) AS src
-            ON tgt.{{ unique_key }} = src.{{ unique_key }}
+            ON 
+            {% if unique_key is string %}
+                tgt.{{ unique_key }} = src.{{ unique_key }}
+            {% else %}
+                {% for key in unique_key %}
+                    tgt.{{ key }} = src.{{ key }}{% if not loop.last %} AND {% endif %}
+                {% endfor %}
+            {% endif %}
 
         WHEN MATCHED AND NOT (
             {% for column in columns_to_update %}
