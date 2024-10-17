@@ -6,8 +6,10 @@
     The macro also logs the process in the ProcessExecutionLog table in the SimulationsAnalyticsLogging database.
     */
     
-    -- Setup logging variables - These are used downstream 
-    DECLARE @BracketedSoureTable nvarchar(1024) = 
+    {% set is_full_refresh = flags.FULL_REFRESH %}
+
+    -- Setup logging variables
+    DECLARE @BracketedSourceTable nvarchar(1024) = 
         QUOTENAME(PARSENAME('{{ source_table }}', 3)) +  '.' + 
         QUOTENAME(PARSENAME('{{ source_table }}', 2)) + '.' + 
         QUOTENAME(PARSENAME('{{ source_table }}', 1));
@@ -16,7 +18,6 @@
         QUOTENAME(PARSENAME('{{ target_table }}', 2)) + '.' + 
         QUOTENAME(PARSENAME('{{ target_table }}', 1));
 
-    {% set is_full_refresh = flags.FULL_REFRESH %}
     DECLARE @ProcessGUID uniqueidentifier = NEWID();
     DECLARE @ProcessName nvarchar(1024) = '{{ this.name }}';    
     DECLARE @ExecutionStatus nvarchar(20) = 'Incomplete';
@@ -37,9 +38,24 @@
         AffectedRows int
     );
 
-    -- Initial Logging Entry
+    -- Get initial row count
     SELECT @InitialRowCount = COUNT(*) FROM {{ target_table }};
 
+    -- Handle full refresh scenario
+    {% if is_full_refresh %}
+        BEGIN TRY
+            TRUNCATE TABLE {{ target_table }};
+            SET @RowsDeleted = @InitialRowCount;
+            {{ log("Table " ~ target_table ~ " truncated due to --full-refresh", info=True) }}
+        END TRY
+        BEGIN CATCH
+            SET @ExecutionStatus = 'Failed';
+            SET @ExecutionMessage = 'Failed to truncate table: ' + ERROR_MESSAGE();
+            GOTO ErrorHandler;
+        END CATCH
+    {% endif %}
+
+    -- Initial Logging Entry
     BEGIN TRY
         INSERT INTO {{ source('logging', 'DBTProcessExecutionLog') }}        
         (
@@ -52,6 +68,7 @@
             ExecutionStatus,
             ExecutionMessage,
             InitialRowCount,
+            RowsDeleted,
             ProcessStartTime
         )
         VALUES
@@ -59,12 +76,13 @@
             '{{ invocation_id }}',
             @ProcessGUID,
             @ProcessName,
-            @BracketedSoureTable,
+            @BracketedSourceTable,
             @BracketedTargetTable,
             {% if is_full_refresh %}1{% else %}0{% endif %},
             @ExecutionStatus,
             @ExecutionMessage,
             @InitialRowCount,
+            @RowsDeleted,
             @ProcessStartTime
         );
     END TRY
@@ -74,9 +92,10 @@
         RETURN;
     END CATCH
 
-    -- Type one SCD MERGE to dimension table
+    -- Perform the merge operation
     BEGIN TRY
         BEGIN TRANSACTION;
+        
         MERGE INTO {{ target_table }} AS tgt
         USING (
             SELECT 
@@ -85,7 +104,7 @@
                 ,sysdatetimeoffset() AS EDWLastUpdatedDatetime
             FROM 
                 {{ source_table }}
-            {% if is_incremental() %}
+            {% if not is_full_refresh %}
             WHERE 
                 HvrChangeTime > (SELECT ISNULL(MAX(HvrChangeTime), '1900-01-01') FROM {{ target_table }})
             {% endif %}
@@ -135,8 +154,7 @@
 
         SELECT 
             @RowsInserted = ISNULL(SUM(CASE WHEN MergeAction = 'INSERT' THEN AffectedRows END), 0),
-            @RowsUpdated = ISNULL(SUM(CASE WHEN MergeAction = 'UPDATE' THEN AffectedRows END), 0),
-            @RowsDeleted = ISNULL(SUM(CASE WHEN MergeAction = 'DELETE' THEN AffectedRows END), 0)
+            @RowsUpdated = ISNULL(SUM(CASE WHEN MergeAction = 'UPDATE' THEN AffectedRows END), 0)
         FROM @MergeResults;
 
         SELECT @FinalRowCount = COUNT(*) FROM {{ target_table }};
@@ -157,6 +175,8 @@
         SET @ErrorSeverity = ERROR_SEVERITY();
         SET @ErrorState = ERROR_STATE();
     END CATCH
+
+ErrorHandler:
 
     -- Finalize Logging Update
     BEGIN TRY
