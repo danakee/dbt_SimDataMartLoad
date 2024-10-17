@@ -83,7 +83,7 @@
 	            CenterManagerFirstName varchar(50) NULL,
 	            CenterManagerLastName varchar(50) NULL,
 	            CenterManagerEmail varchar(255) NULL,
-                HvrChangeTime datetimeoffset(3) NULL,
+                HvrChangeTime datetimeoffset(3) NOT NULL,
                 EDWCreatedDatetime datetimeoffset(3) NOT NULL CONSTRAINT DF_{{ this.identifier }}_EDWCreatedDatetime DEFAULT (sysdatetimeoffset()),
                 EDWLastUpdatedDatetime datetimeoffset(3) NOT NULL CONSTRAINT DF_{{ this.identifier }}_EDWLastUpdatedDatetime DEFAULT (sysdatetimeoffset())
             ) ON [PRIMARY];
