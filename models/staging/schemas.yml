@@ -1,4 +1,5 @@
 models:
+
   - name: stg_center
     description: The stg_center model is a staging table that contains information
       about various centers. It includes details such as the center's primary
@@ -176,6 +177,7 @@ models:
           time, and is timezone aware.
         data_type: datetimeoffset
         quote: true
+
   - name: stg_budget_hierarchy
     description: The stg_budget_hierarchy model is a staging table that contains
       budget hierarchy data. It includes columns for budget category type code,
@@ -223,6 +225,7 @@ models:
           process.
         data_type: datetimeoffset
         quote: true
+
   - name: stg_department_group
     description: The stg_department_group model is a staging table that holds
       department group data. It is populated from the 'employee2.tblDeptGroup'
@@ -271,6 +274,7 @@ models:
           the time of execution.
         data_type: datetimeoffset
         quote: true
+
   - name: stg_department
     description: The stg_department model is a staging table that contains
       department data from various sources. It includes columns for department
@@ -403,6 +407,7 @@ models:
           aware.
         data_type: datetimeoffset
         quote: true
+
   - name: stg_issue
     description: The stg_issue model is a staging table that contains information
       about issues related to various simulators. It includes details such as
@@ -607,6 +612,7 @@ models:
           used to track the creation time of each stage in the process.
         data_type: datetimeoffset
         quote: true
+
   - name: stg_system
     description: The stg_system model is a staging table in the
       SimulationsAnalyticsStage schema. It is populated with data from the
@@ -659,6 +665,7 @@ models:
           the time of execution. The data type is datetimeoffset(3).
         data_type: datetimeoffset
         quote: true
+
   - name: stg_time
     description: The stg_time model is a time dimension table that generates a list
       of every second in a day, from 00:00:00 to 23:59:59. It includes columns
@@ -737,3 +744,570 @@ models:
           the hour and minute, followed by 'AM' or 'PM'.
         data_type: nvarchar
         quote: true
+
+
+  - name: stg_project
+    description: The stg_project model is a staging table that is used to store
+      project data. It is populated from multiple source tables including
+      project2.tblProject, project2.tblStatus, project2.tblProjType,
+      project2.tblAccountingType, and employee2.tblEmployee. The model includes
+      columns for project details, status, type, accounting type, and associated
+      employee information. The data is inserted into the staging table based on
+      a specific condition on the HvrChangeTime column. The model also includes
+      logging and error handling mechanisms.
+    columns:
+      - name: ProjectPKey
+        description: The primary key of the project. This is a unique identifier for
+          each project.
+        data_type: int
+        quote: true
+      - name: ProjectName
+        description: The name of the project. This is a descriptive name that identifies
+          the project.
+        data_type: varchar
+        quote: true
+      - name: ProjectDescription
+        description: A detailed description of the project. This provides more context
+          about the project.
+        data_type: varchar
+        quote: true
+      - name: ProjectStatusCode
+        description: The unique code representing the current status of the project.
+          This is a foreign key linking to the 'tblStatus' table in the
+          'Project2' database.
+        data_type: char
+        quote: true
+      - name: ProjectStatusDescription
+        description: A descriptive text explaining the current status of the project.
+          This is derived from the 'Description' column in the 'tblStatus' table
+          in the 'Project2' database.
+        data_type: char
+        quote: true
+      - name: ProjectTypeCode
+        description: The unique code representing the type of the project. This is a
+          foreign key linking to the 'tblProjType' table in the 'Project2'
+          database.
+        data_type: varchar
+        quote: true
+      - name: ProjectTypeDescription
+        description: This column contains the description of the project type. It is
+          derived from the 'tblProjType' table in the 'Project2' database.
+        data_type: varchar
+        quote: true
+      - name: ReportTypeDescription
+        description: This column contains the description of the report type. It is
+          derived from the 'tblAccountingType' table in the 'Project2' database.
+        data_type: varchar
+        quote: true
+      - name: IsEAC
+        description: This column is a boolean flag indicating whether the project is an
+          EAC (Estimate at Completion) project. It is derived from the
+          'tblProject' table in the 'Project2' database.
+        data_type: bit
+        quote: true
+      - name: IsStopDR
+        description: A boolean flag indicating whether the project has been stopped or
+          not. If the value is true, the project has been stopped. If the value
+          is false, the project is ongoing.
+        data_type: bit
+        quote: true
+      - name: ProjectManagerFirstName
+        description: The first name of the project manager assigned to the project. This
+          is a string value.
+        data_type: varchar
+        quote: true
+      - name: ProjectManagerLastName
+        description: The last name of the project manager assigned to the project. This
+          is a string value.
+        data_type: varchar
+        quote: true
+      - name: EffectiveDate
+        description: The date when the project became effective. This is a datetime field.
+        data_type: datetime
+        quote: true
+      - name: IsLatest
+        description: A boolean field indicating whether the project is the latest
+          version. True indicates it is the latest version, False indicates it
+          is not.
+        data_type: bit
+        quote: true
+      - name: ProjectCreateDate
+        description: The date when the project was created. This is a datetime field.
+        data_type: datetime
+        quote: true
+      - name: ProjectUpdateDate
+        description: The date and time when the project was last updated. This is a
+          datetime field.
+        data_type: datetime
+        quote: true
+      - name: ProjectVersion
+        description: The version of the project. This is an integer field that
+          increments with each update to the project.
+        data_type: int
+        quote: true
+      - name: HvrChangeTime
+        description: The date and time when the last change was made to the project.
+          This is a datetime field that is updated whenever a change is made to
+          the project.
+        data_type: datetimeoffset
+        quote: true
+      - name: StageCreatedDatetime
+        description: This column represents the date and time when the record was first
+          created in the staging table. It is automatically populated with the
+          current system date and time at the moment of record creation.
+        data_type: datetimeoffset
+        quote: true
+
+  - name: stg_simulator_configuration
+    description: The stg_simulator_configuration model is a staging table that
+      stores the configuration details of a simulator. It includes columns for
+      the primary keys of the simulator and its configuration, the name of the
+      configuration, the location name, a flag indicating if the configuration
+      is the default, timestamps for when the source was created and last
+      updated, the change time from the HVR system, and timestamps for when the
+      staging record was created and last updated. The data is sourced from the
+      Sim2 and Employee2 databases, specifically the tblSim, tblObjectHier,
+      tblClassLink, tblConfig, and tblLocation tables. The model includes a
+      process for logging the execution of the data load, including the number
+      of rows inserted and deleted, and any errors that occurred.
+    columns:
+      - name: SimulatorConfigurationPKey
+        description: This is the primary key for the Simulator Configuration. It is a
+          unique identifier for each configuration in the simulator.
+        data_type: int
+        quote: true
+      - name: SimulatorPKey
+        description: This is the primary key for the Simulator. It is a unique
+          identifier for each simulator.
+        data_type: int
+        quote: true
+      - name: ConfigurationName
+        description: This is the name of the configuration in the simulator. It provides
+          a descriptive label for each configuration.
+        data_type: varchar
+        quote: true
+      - name: LocationName
+        description: The name of the location where the simulation is being run. This is
+          derived from the 'Employee2'.'dbo'.'tblLocation' table.
+        data_type: varchar
+        quote: true
+      - name: IsDefault
+        description: A boolean flag indicating whether the configuration is the default
+          one for the simulator. This is derived from the
+          'Sim2'.'dbo'.'tblConfig' table.
+        data_type: bit
+        quote: true
+      - name: SourceCreatedDatetime
+        description: The datetime when the source record was created. This is derived
+          from the 'Sim2'.'dbo'.'tblConfig' table.
+        data_type: datetime
+        quote: true
+      - name: SourceLastUpdatedDatetime
+        description: This column represents the last updated datetime of the source data
+          in the 'Sim2' database.
+        data_type: datetime
+        quote: true
+      - name: HvrChangeTime
+        description: This column represents the most recent change time across all the
+          source tables involved in the query. It is used to track changes in
+          the source data.
+        data_type: datetimeoffset
+        quote: true
+      - name: StageCreatedDatetime
+        description: This column represents the datetime when the staging process was
+          initiated. It is automatically set to the current system datetime when
+          the staging process begins.
+        data_type: datetimeoffset
+        quote: true
+
+  - name: stg_simulator_qualification
+    description: The stg_simulator_qualification model is a staging table that holds
+      data related to simulator qualifications. It includes columns for the
+      primary keys of the simulator qualification, simulator configuration, and
+      simulator. It also contains information about the qualification agency,
+      qualification level, effective and expiry dates of the simulator
+      qualification, and a description of the simulator qualification.
+      Additional columns provide details about the process start date, scheduled
+      requalification date, initial simulator qualification date, and whether
+      the simulator qualification is deleted or hidden in reports. The model
+      also includes information about the qualification level, ACCircular, and
+      agency. Finally, it tracks the change time, creation time, and last update
+      time of the staging data.
+    columns:
+      - name: SimulatorQualificationPKey
+        data_type: int
+        quote: true
+        description: This is the primary key for the Simulator Qualification table. It
+          is a unique identifier for each record in the table.
+      - name: SimulatorConfigurationPKey
+        data_type: int
+        quote: true
+        description: This is the primary key for the Simulator Configuration table. It
+          is used to link the Simulator Qualification record to the
+          corresponding Simulator Configuration record.
+      - name: SimulatorPKey
+        data_type: int
+        quote: true
+        description: This is the primary key for the Simulator table. It is used to link
+          the Simulator Qualification record to the corresponding Simulator
+          record.
+      - name: QualificationAgencyId
+        data_type: int
+        quote: true
+        description: The unique identifier for the agency that provided the qualification.
+      - name: QualificationLevelId
+        data_type: int
+        quote: true
+        description: The unique identifier for the level of qualification obtained.
+      - name: SimulatorQualificationEffectiveDate
+        data_type: date
+        quote: true
+        description: The date when the simulator qualification became effective.
+      - name: SimulatorQualificationExpiryDate
+        data_type: date
+        quote: true
+        description: The date when the simulator qualification expires. It is of date
+          data type.
+      - name: SimulatorQualificationDescription
+        data_type: varchar
+        quote: true
+        description: A text description of the simulator qualification. It is of varchar
+          data type.
+      - name: SimulatorQualificationProcessStartDate
+        data_type: date
+        quote: true
+        description: The date when the simulator qualification process started. It is of
+          date data type.
+      - name: ScheduledRequalificationDate
+        data_type: date
+        quote: true
+        description: The date when the simulator is scheduled for requalification. This
+          is a date field.
+      - name: InitialSimulatorQualificationDate
+        data_type: date
+        quote: true
+        description: The date when the simulator was initially qualified. This is a date
+          field.
+      - name: IsSimulatorQualificationDeleted
+        data_type: bit
+        quote: true
+        description: A flag indicating whether the simulator qualification has been
+          deleted. This is a bit field where 1 indicates that the qualification
+          has been deleted and 0 indicates that it has not been deleted.
+      - name: OriginalSimulatorQualificationProjectName
+        data_type: varchar
+        quote: true
+        description: The name of the original project under which the simulator
+          qualification was conducted.
+      - name: IsHiddenInReport
+        data_type: bit
+        quote: true
+        description: A boolean flag indicating whether the simulator qualification is
+          hidden in reports. A value of 1 means it is hidden, and 0 means it is
+          visible.
+      - name: SimulatorQualificationLevelName
+        data_type: varchar
+        quote: true
+        description: The name of the level of qualification for the simulator. This
+          could be a specific certification or rating.
+      - name: SimulatorQualificationLevelDescription
+        data_type: varchar
+        quote: true
+        description: This column contains the description of the simulator qualification
+          level. It is a string data type and can contain any alphanumeric
+          characters.
+      - name: IsQualificationLevelApproved
+        data_type: bit
+        quote: true
+        description: This column indicates whether the qualification level is approved
+          or not. It is a boolean data type and can contain either 1 (approved)
+          or 0 (not approved).
+      - name: ACCircularName
+        data_type: varchar
+        quote: true
+        description: This column contains the name of the AC Circular associated with
+          the simulator qualification. It is a string data type and can contain
+          any alphanumeric characters.
+      - name: IsACCircularApproved
+        data_type: bit
+        quote: true
+        description: A bit field indicating whether the associated ACCircular is
+          approved. 1 indicates approval, 0 indicates otherwise.
+      - name: SimulatorQualificationAgencyName
+        data_type: varchar
+        quote: true
+        description: The name of the agency that provided the qualification for the
+          simulator.
+      - name: SimulatorQualificationAgencyDescription
+        data_type: varchar
+        quote: true
+        description: A description of the agency that provided the qualification for the
+          simulator.
+      - name: AgencySimulatorId
+        data_type: varchar
+        quote: true
+        description: This column represents the unique identifier of the agency
+          simulator. It is a varchar type field and is used to uniquely identify
+          each simulator within an agency.
+      - name: IsAgencyDomestic
+        data_type: bit
+        quote: true
+        description: This column is a bit type field that indicates whether the agency
+          is domestic or not. A value of 1 indicates that the agency is
+          domestic, while a value of 0 indicates that the agency is not
+          domestic.
+      - name: AgencySponsorCountryCode
+        data_type: int
+        quote: true
+        description: This column represents the country code of the agency sponsor. It
+          is an integer type field and is used to identify the country of the
+          agency sponsor.
+      - name: IsAgencyDeleted
+        data_type: bit
+        quote: true
+        description: A bit field indicating whether the agency is deleted. A value of 1
+          means the agency is deleted, and a value of 0 means the agency is not
+          deleted.
+      - name: HvrChangeTime
+        data_type: datetimeoffset
+        quote: true
+        description: The datetimeoffset field representing the most recent change time
+          across multiple tables. This field is used to track changes in the
+          data.
+      - name: StageCreatedDatetime
+        data_type: datetimeoffset
+        quote: true
+        description: The datetimeoffset field representing the time when the stage was
+          created. This field is used to track when each record was inserted
+          into the staging table.
+
+models:
+  - name: stg_simulator
+    description: The stg_simulator model is a staging table that holds data related
+      to simulators. It includes columns for the simulator's primary key, ID,
+      name, creation date, last updated date, asset number, location ID, lead
+      location ID, destination ID, ILS status, date ready for training,
+      simulator type key, simulator type name, aircraft model key, aircraft
+      model code, aircraft model name, aircraft model type value, aircraft type
+      name, aircraft type description, status key, status name, track lost time,
+      simulator group key, simulator group name, simulator group description,
+      ship date, owner ID, owner customer ID, owner description, manufacturer
+      ID, manufacturer name, change time, stage created datetime, and stage last
+      updated datetime. The data is sourced from multiple tables in the Sim2
+      database and is inserted into the SimulationsAnalyticsStage database. The
+      model also logs the process execution and updates the StageTableLastUpdate
+      table with the last updated timestamp.
+    columns:
+      - name: SimulatorPKey
+        data_type: int
+        quote: true
+        description: The primary key of the simulator. This is a unique identifier for
+          each simulator in the database.
+      - name: SimulatorId
+        data_type: int
+        quote: true
+        description: The ID of the simulator. This is a unique identifier for each
+          simulator, but unlike the primary key, this ID is used in the
+          application layer.
+      - name: SimulatorName
+        data_type: varchar
+        quote: true
+        description: The name of the simulator. This is a descriptive name for the
+          simulator, which is used for display purposes in the application.
+      - name: SourceCreatedDate
+        data_type: datetime
+        quote: true
+        description: The date and time when the simulator record was first created in
+          the source system.
+      - name: SourceLastUpdatedDate
+        data_type: datetime
+        quote: true
+        description: The date and time when the simulator record was last updated in the
+          source system.
+      - name: FSIAssetNumber
+        data_type: nvarchar
+        quote: true
+        description: The unique identifier for the simulator asset in the FlightSafety
+          International system.
+      - name: LocationId
+        data_type: int
+        quote: true
+        description: The unique identifier for the location where the simulator is
+          currently placed.
+      - name: LeadLocationId
+        data_type: int
+        quote: true
+        description: The unique identifier for the lead location, which is the primary
+          location responsible for the simulator.
+      - name: DestinationId
+        data_type: int
+        quote: true
+        description: The unique identifier for the destination where the simulator is
+          intended to be moved or shipped.
+      - name: IsILS
+        data_type: int
+        quote: true
+        description: An integer column that indicates whether the simulator is equipped
+          with an Instrument Landing System (ILS). A value of 1 indicates the
+          presence of ILS, while 0 indicates its absence.
+      - name: DateReadyForTraining
+        data_type: datetime
+        quote: true
+        description: A datetime column that represents the date and time when the
+          simulator is ready for training. It is stored in the UTC timezone.
+      - name: SimulatorTypeKey
+        data_type: int
+        quote: true
+        description: An integer column that serves as a unique identifier for the type
+          of simulator. This key is used to join with the Simulator Type table
+          to get more details about the type of simulator.
+      - name: SimulatorTypeName
+        data_type: varchar
+        quote: true
+        description: The name of the simulator type. This is a string value that
+          represents the type of the simulator.
+      - name: AircraftModelKey
+        data_type: int
+        quote: true
+        description: The primary key of the aircraft model. This is an integer value
+          that uniquely identifies the aircraft model in the database.
+      - name: AircraftModelCode
+        data_type: varchar
+        quote: true
+        description: The code of the aircraft model. This is a string value that
+          represents the code of the aircraft model.
+      - name: AircraftModelName
+        data_type: varchar
+        quote: true
+        description: The name of the aircraft model associated with the simulator.
+      - name: AircraftModelTypeValue
+        data_type: int
+        quote: true
+        description: The unique identifier for the type of aircraft model associated
+          with the simulator.
+      - name: AircraftTypeName
+        data_type: varchar
+        quote: true
+        description: The name of the type of aircraft model associated with the simulator.
+      - name: AircraftTypeDescription
+        data_type: varchar
+        quote: true
+        description: This column represents the description of the aircraft type. It is
+          a string data type and can contain any alphanumeric characters.
+      - name: StatusKey
+        data_type: int
+        quote: true
+        description: This column represents the unique identifier for the status of the
+          simulator. It is an integer data type and can contain any numeric
+          value.
+      - name: StatusName
+        data_type: varchar
+        quote: true
+        description: This column represents the name of the status of the simulator. It
+          is a string data type and can contain any alphanumeric characters.
+      - name: TrackLostTime
+        data_type: int
+        quote: true
+        description: This column represents the time lost due to any issues or problems
+          with the simulator. It is measured in minutes.
+      - name: SimulatorGroupKey
+        data_type: int
+        quote: true
+        description: This column is a unique identifier for each simulator group. It is
+          used to link the simulator to its respective group.
+      - name: SimulatorGroupName
+        data_type: varchar
+        quote: true
+        description: This column represents the name of the group to which the simulator
+          belongs. It is a descriptive name that provides more context about the
+          group.
+      - name: SimulatorGroupDescription
+        data_type: varchar
+        quote: true
+        description: This column contains the description of the simulator group. It is
+          a varchar type field and can contain any alphanumeric characters.
+      - name: ShipDate
+        data_type: datetime
+        quote: true
+        description: This column contains the date when the simulator was shipped. It is
+          a datetime type field and follows the standard date and time format.
+      - name: OwnerId
+        data_type: int
+        quote: true
+        description: This column contains the unique identifier of the owner of the
+          simulator. It is an integer type field and contains only numeric
+          values.
+      - name: OwnerCustomerId
+        data_type: varchar
+        quote: true
+        description: This column represents the unique customer ID of the owner of the
+          simulator.
+      - name: OwnerDescription
+        data_type: varchar
+        quote: true
+        description: This column provides a description of the owner of the simulator.
+      - name: ManufacturerId
+        data_type: varchar
+        quote: true
+        description: This column represents the unique ID of the manufacturer of the
+          simulator.
+      - name: ManufacturerName
+        data_type: varchar
+        quote: true
+        description: The name of the manufacturer of the simulator.
+      - name: HvrChangeTime
+        data_type: datetimeoffset
+        quote: true
+        description: The timestamp of the most recent change made to the simulator data
+          across all source tables.
+      - name: StageCreatedDatetime
+        data_type: datetimeoffset
+        quote: true
+        description: The timestamp of when the staging record was created.
+
+models:
+  - name: stg_user
+    description: The stg_user model is a staging table that holds user data
+      extracted from the 'employee2.tblEmployee' source table. The model is
+      designed to filter out test users and only include employees with a
+      non-zero employee number. The data is then inserted into the
+      'SimulationsAnalyticsStage.dbo.StageUser' table. The model also logs the
+      process execution details such as the number of rows inserted, deleted,
+      and the final row count in the
+      'SimulationsAnalyticsLogging.dbo.DBTProcessExecutionLog' table. If the
+      process is successful, the 'StageTableLastUpdate' table in the
+      'SimulationsAnalyticsLogging.dbo' schema is updated with the current
+      timestamp. If the process fails, an error message is raised.
+    columns:
+      - name: EmployeePKey
+        data_type: int
+        quote: true
+        description: This is the primary key for the employee. It is an integer value
+          that uniquely identifies each employee in the database.
+      - name: EmployeeNumber
+        data_type: int
+        quote: true
+        description: This is the unique number assigned to each employee. It is an
+          integer value that is unique for each employee.
+      - name: UserFirstName
+        data_type: varchar
+        quote: true
+        description: This is the first name of the user. It is a string value that
+          represents the first name of the employee.
+      - name: UserLastName
+        data_type: varchar
+        quote: true
+        description: This column stores the last name of the user. It is a variable
+          character field that can contain any type of characters.
+      - name: HvrChangeTime
+        data_type: datetimeoffset
+        quote: true
+        description: This column stores the time when the last change was made to the
+          user's record. It is a datetimeoffset field that can store dates along
+          with time zone information.
+      - name: StageCreatedDatetime
+        data_type: datetimeoffset
+        quote: true
+        description: This column stores the date and time when the record was created in
+          the staging table. It is a datetimeoffset field that can store dates
+          along with time zone information.
