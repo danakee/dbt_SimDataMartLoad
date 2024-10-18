@@ -659,3 +659,81 @@ models:
           the time of execution. The data type is datetimeoffset(3).
         data_type: datetimeoffset
         quote: true
+  - name: stg_time
+    description: The stg_time model is a time dimension table that generates a list
+      of every second in a day, from 00:00:00 to 23:59:59. It includes columns
+      for the time key, time, hour, minute, second, AM/PM indicator, 24-hour
+      format hour, 12-hour format hour, minute of the day, second of the day,
+      period of the day (Morning, Afternoon, Evening, Night), and time in words.
+    columns:
+      - name: TimeKey
+        description: This column represents the time value in seconds from the start of
+          the day (00:00:00). It ranges from 0 to 86399, representing each
+          second of a 24-hour day.
+        data_type: bigint
+        quote: true
+      - name: Time
+        description: This column represents the actual time of the day in HH:MM:SS
+          format. It is derived from the 'TimeKey' column by adding the
+          'TimeKey' value as seconds to the start of the day (00:00:00).
+        data_type: time
+        quote: true
+      - name: Hour
+        description: This column represents the hour part of the 'Time' column in
+          24-hour format. It ranges from 0 to 23.
+        data_type: int
+        quote: true
+      - name: Minute
+        description: This column represents the minute part of the time. It is extracted
+          from the time value and formatted as 'mm'.
+        data_type: int
+        quote: true
+      - name: Second
+        description: This column represents the second part of the time. It is extracted
+          from the time value and formatted as 'ss'.
+        data_type: int
+        quote: true
+      - name: ampm
+        description: This column indicates whether the time is in the AM (Ante Meridiem,
+          before midday) or PM (Post Meridiem, after midday) period of the day.
+          It is determined based on the hour part of the time.
+        data_type: varchar
+      - name: Hour24
+        description: This column represents the hour of the day in a 24-hour format. The
+          value ranges from 0 to 23, where 0 represents midnight and 23
+          represents the last hour of the day.
+        data_type: int
+        quote: true
+      - name: Hour12
+        description: This column represents the hour of the day in a 12-hour format. The
+          value ranges from 1 to 12, where 1 represents the first hour of the
+          day or afternoon, and 12 represents noon or midnight.
+        data_type: int
+        quote: true
+      - name: MinuteOfDay
+        description: This column represents the minute of the day. It is calculated by
+          multiplying the hour of the day by 60 and adding the minute of the
+          hour. The value ranges from 0 (at midnight) to 1439 (the last minute
+          of the day).
+        data_type: int
+        quote: true
+      - name: SecondOfDay
+        description: This column represents the number of seconds that have passed since
+          the start of the day (00:00:00). It is calculated by finding the
+          difference in seconds between the current time and the start of the
+          day.
+        data_type: int
+        quote: true
+      - name: PeriodOfDay
+        description: "This column categorizes the time of day into four periods:
+          'Morning', 'Afternoon', 'Evening', and 'Night'. The categorization is
+          based on the hour of the day. Morning is from 5 to 11, Afternoon is
+          from 12 to 16, Evening is from 17 to 20, and Night is any other time."
+        data_type: varchar
+        quote: true
+      - name: TimeInWords
+        description: This column represents the time in a human-readable format. It is
+          calculated by formatting the time value into a string that represents
+          the hour and minute, followed by 'AM' or 'PM'.
+        data_type: nvarchar
+        quote: true
