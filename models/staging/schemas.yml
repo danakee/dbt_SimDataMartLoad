@@ -607,3 +607,55 @@ models:
           used to track the creation time of each stage in the process.
         data_type: datetimeoffset
         quote: true
+  - name: stg_system
+    description: The stg_system model is a staging table in the
+      SimulationsAnalyticsStage schema. It is populated with data from the
+      sim2.tblSystems and sim2.tblSysGroup tables. The model includes columns
+      for the system primary key, system name, system description, whether the
+      system is affected, whether the system is active, the system group name,
+      the time of the last change in the source system (HVRChangeTime), and the
+      time the staging row was created. The model also logs the execution of the
+      data loading process, including the number of rows inserted and deleted,
+      the start and end time of the process, and any errors that occurred.
+    columns:
+      - name: SystemPKey
+        description: This is the primary key for the system. It is a unique identifier
+          for each system.
+        data_type: int
+        quote: true
+      - name: SystemName
+        description: This is the name of the system. It provides a human-readable name
+          for each system.
+        data_type: varchar
+        quote: true
+      - name: SystemDescription
+        description: This is a description of the system. It provides additional details
+          about the system.
+        data_type: varchar
+        quote: true
+      - name: IsAffectedSystem
+        description: A boolean flag indicating whether the system is affected by any
+          changes or not.
+        data_type: bit
+        quote: true
+      - name: IsSystemActive
+        description: A boolean flag indicating whether the system is currently active or
+          not.
+        data_type: bit
+        quote: true
+      - name: SystemGroupName
+        description: The name of the group to which the system belongs.
+        data_type: varchar
+        quote: true
+      - name: HVRChangeTime
+        description: This column represents the most recent change time for the system
+          or system group. It is derived from the maximum change time between
+          the system and system group. The data type is datetime.
+        data_type: datetimeoffset
+        quote: true
+      - name: StageCreatedDatetime
+        description: This column represents the datetime when the staging process was
+          executed. It is automatically set to the current system datetime at
+          the time of execution. The data type is datetimeoffset(3).
+        data_type: datetimeoffset
+        quote: true
