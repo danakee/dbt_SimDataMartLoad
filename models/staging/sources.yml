@@ -74,3 +74,9 @@ sources:
       - name: tblStatus
       - name: tblSystems
       - name: tblSysGroup
+
+  - name: utility
+    database: master
+    schema: dbo
+    tables:
+      - name: spt_values

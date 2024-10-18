@@ -16,8 +16,8 @@ WITH Numbers AS (
     SELECT TOP (36525) -- 100 years worth of days
         ROW_NUMBER() OVER (ORDER BY (SELECT NULL)) - 1 AS N
     FROM 
-        {{ source('utility', 'numbers_table') }} t1
-        CROSS JOIN {{ source('utility', 'numbers_table') }} t2
+        {{ source('utility', 'spt_values') }} t1
+        CROSS JOIN {{ source('utility', 'spt_values') }} t2
 ),
 DateTable AS (
     SELECT
@@ -44,7 +44,7 @@ SELECT
     ,DATENAME(WEEKDAY, [Date]) AS DayName
     ,CASE WHEN DATEPART(WEEKDAY, [Date]) IN (1, 7) THEN 1 ELSE 0 END AS IsWeekend
     ,DATEPART(WEEK, [Date]) AS WeekOfYear
+    ,CAST(sysdatetimeoffset() AS datetimeoffset(3))             AS HVRChangeTime
+    ,CAST(sysdatetimeoffset() AS datetimeoffset(3))             AS StageCreatedDatetime    
 FROM 
     DateTable
-ORDER BY 
-    [Date]

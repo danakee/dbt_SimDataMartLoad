@@ -11,8 +11,8 @@ WITH Numbers AS (
     SELECT TOP (86400) -- 86400 seconds in a day
         ROW_NUMBER() OVER (ORDER BY (SELECT NULL)) - 1 AS TimeValue
     FROM 
-        [master].[dbo].[spt_values] AS n1
-    CROSS JOIN [master].[dbo].[spt_values] AS n2
+        {{ source('utility', 'spt_values') }} AS n1
+    CROSS JOIN {{ source('utility', 'spt_values') }} AS n2
 )
 
 SELECT
@@ -41,5 +41,3 @@ SELECT
     ,CAST(sysdatetimeoffset() AS datetimeoffset(3))             AS StageCreatedDatetime
 FROM 
     Numbers
-ORDER BY     
-    [Time]

@@ -1413,3 +1413,126 @@ models:
           updated during the ETL process whenever a record is modified.
         data_type: datetimeoffset
         quote: true
+  - name: dim_date
+    description: The 'dim_date' model is a dimension table in the
+      'SimulationsAnalytics' database. It contains date-related information such
+      as the calendar date, accounting period key and name, accounting period
+      start and end dates, year, quarter, month, month name, month abbreviation,
+      day, day of the week, day name, whether it's a weekend, week of the year,
+      and the HVR change time. The model also includes metadata fields such as
+      the EDW created and last updated timestamps. The model is populated from
+      the 'StageDate' table in the 'SimulationsAnalyticsStage' database. The
+      data is merged into the 'dim_date' table based on the 'DateKey'. If a
+      matching record is found and there are differences in any of the other
+      fields, the record is updated. If no matching record is found, a new
+      record is inserted. The process logs the number of rows inserted, updated,
+      and deleted, as well as any errors encountered during the process.
+    columns:
+      - name: DateKey
+        description: The unique identifier for each date in the DimDate table. This is
+          the primary key for the table.
+        data_type: int
+        quote: true
+      - name: CalendarDate
+        description: The actual date represented in the format YYYY-MM-DD. This field is
+          used for date-related calculations and joins in the data model.
+        data_type: datetime
+        quote: true
+      - name: AccountingPeriodKey
+        description: The unique identifier for each accounting period. This key is used
+          to join the DimDate table with other tables that contain accounting
+          period information.
+        data_type: int
+        quote: true
+      - name: AccountingPeriodName
+        description: The name of the accounting period. This is typically a month and
+          year combination, such as 'January 2020'.
+        data_type: varchar
+        quote: true
+      - name: AccountingPeriodStartDate
+        description: The start date of the accounting period. This is the first day of
+          the period, typically the first day of a month.
+        data_type: date
+        quote: true
+      - name: AccountingPeriodEndDate
+        description: The end date of the accounting period. This is the last day of the
+          period, typically the last day of a month.
+        data_type: date
+        quote: true
+      - name: Year
+        description: The 'Year' column represents the year of the date. It is an integer
+          value that ranges from the year 1900 to the current year.
+        data_type: int
+        quote: true
+      - name: Quarter
+        description: The 'Quarter' column represents the quarter of the year for the
+          date. It is an integer value that ranges from 1 to 4, where 1
+          represents the first quarter of the year (January to March), 2
+          represents the second quarter (April to June), 3 represents the third
+          quarter (July to September), and 4 represents the fourth quarter
+          (October to December).
+        data_type: int
+        quote: true
+      - name: Month
+        description: The 'Month' column represents the month of the year for the date.
+          It is an integer value that ranges from 1 to 12, where 1 represents
+          January and 12 represents December.
+        data_type: int
+        quote: true
+      - name: MonthName
+        description: The full name of the month for the given date. For example,
+          'January', 'February', etc.
+        data_type: nvarchar
+        quote: true
+      - name: MonthAbbreviation
+        description: The abbreviated name of the month for the given date. For example,
+          'Jan', 'Feb', etc.
+        data_type: nvarchar
+        quote: true
+      - name: Day
+        description: The day of the month for the given date. This is a numeric value
+          ranging from 1 to 31.
+        data_type: int
+        quote: true
+      - name: DayOfWeek
+        description: This column represents the day of the week as a numerical value,
+          where 1 represents Monday and 7 represents Sunday.
+        data_type: int
+        quote: true
+      - name: DayName
+        description: This column represents the name of the day of the week, such as
+          'Monday', 'Tuesday', etc.
+        data_type: nvarchar
+        quote: true
+      - name: IsWeekend
+        description: This column is a boolean flag indicating whether the day is a
+          weekend (Saturday or Sunday). '1' represents a weekend day, while '0'
+          represents a weekday.
+        data_type: int
+        quote: true
+      - name: WeekOfYear
+        description: This column represents the week of the year for the given date. It
+          is an integer value ranging from 1 to 53. This value is calculated
+          based on the date in the 'CalendarDate' column.
+        data_type: int
+        quote: true
+      - name: HVRChangeTime
+        description: This column represents the timestamp when the last change was made
+          to the record. It is of datetime type and is automatically updated
+          whenever a change is made to the record in the source system.
+        data_type: datetimeoffset
+        quote: true
+      - name: EDWCreatedDatetime
+        description: This column represents the timestamp when the record was first
+          created in the Enterprise Data Warehouse (EDW). It is of datetime type
+          and is automatically populated when a new record is inserted into the
+          'DimDate' table.
+        data_type: datetimeoffset
+        quote: true
+      - name: EDWLastUpdatedDatetime
+        description: This column represents the timestamp when the record was last
+          updated in the EDW (Enterprise Data Warehouse). The value is
+          automatically set to the current system date and time whenever a
+          record is inserted or updated.
+        data_type: datetimeoffset
+        quote: true
