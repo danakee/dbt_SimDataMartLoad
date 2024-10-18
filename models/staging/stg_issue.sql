@@ -80,43 +80,40 @@
     ),
     Issue AS (
         SELECT
-             i.pkey                     AS IssuePKey
-            ,i.issueid                  AS IssueId
-            ,CAST(i.issue_dt AS date)   AS IssueDate
-            ,CAST(i.issue_dt AS time)   AS IssueTime
-            ,s.pkey                     AS SimulatorPKey
-            ,s.sim_id                   AS SimulatorId
-            ,sy.affectedsystem          AS IsAffectedSystem    
-            ,iwcl.ConfigurationNameList AS AffectedConfigurationList
-            ,CAST(NULL AS int)          AS CenterKey
-            ,i.description              AS IssueDescription
-            ,CAST(NULL AS varchar)      AS IssueTypeDescription     
-            ,pr.name                    AS IssuePriorityNumber      
-            ,pr.description             AS IssuePriority   
-            ,iss.desc_short             AS IssueStatusName
-            ,ic.category                AS IssueCategoryName
-            ,icl.Classification         AS IssueClassificationName
-            ,i.date_closed              AS IssueCloseTimestamp      
-            ,i.training_impact          AS TrainingRestrictionText
-            ,i.training_critical        AS IsCriticalTrainingIssue
-            ,trc.name                   AS TrainingCategoryName
-            ,p.ProjName                 AS JobNumber
-            ,CAST(NULL AS varchar)      AS IssueType
-            ,CAST(i.fk_fstd_lost_time_qty AS int)   AS FSTDLostTimeMinutes
-            ,CAST(NULL AS varchar)      AS ActivityLog
-            ,i.mmi                      AS IsMMI
-            ,i.issuedocno               AS DocumentNumber
-            ,i.chargecode               AS ChargeCode
-            ,CAST(i.duedt AS date)      AS Duedate    
-            ,i.writtenby                AS WrittenByName    
-            ,i.writtenby_contact        AS WrittenByContactInfoTxt
-            ,ra.Agency_name             AS RegulatoryAgencyName
-            ,ltt.description            AS LostTimeTypeDescription
-            ,CAST(NULL AS int)          AS LostTimeMinutesNumber
-            ,CAST(NULL AS int)          AS FSTDLostTimeMinutesNumber
-            ,cs.type                    AS RootCauseTypeName
-            ,cs.description             AS RootCauseTypeDescription
-            ,rct.RCType                 AS FSTDTypeName
+             i.pkey                                 AS IssuePKey
+            ,i.issueid                              AS IssueId
+            ,CAST(i.issue_dt AS date)               AS IssueDate
+            ,CAST(i.issue_dt AS time)               AS IssueTime
+            ,s.pkey                                 AS SimulatorPKey
+            ,s.sim_id                               AS SimulatorId
+            ,sy.affectedsystem                      AS IsAffectedSystem    
+            ,iwcl.ConfigurationNameList             AS AffectedConfigurationList
+            ,CAST(NULL AS int)                      AS CenterKey
+            ,i.description                          AS IssueDescription
+            ,prt.prioritytype                       AS IssueTypeDescription     
+            ,pr.name                                AS IssuePriorityNumber      
+            ,pr.description                         AS IssuePriority   
+            ,iss.desc_short                         AS IssueStatusName
+            ,ic.category                            AS IssueCategoryName
+            ,icl.Classification                     AS IssueClassificationName
+            ,i.date_closed                          AS IssueCloseTimestamp      
+            ,i.training_impact                      AS TrainingRestrictionText
+            ,i.training_critical                    AS IsCriticalTrainingIssue
+            ,trc.name                               AS TrainingCategoryName
+            ,p.ProjName                             AS JobNumber
+            ,i.mmi                                  AS IsMMI
+            ,i.issuedocno                           AS DocumentNumber
+            ,i.chargecode                           AS ChargeCode
+            ,CAST(i.duedt AS date)                  AS Duedate    
+            ,i.writtenby                            AS WrittenByName    
+            ,i.writtenby_contact                    AS WrittenByContactInfoTxt
+            ,ra.Agency_name                         AS RegulatoryAgencyName
+            ,ltt.description                        AS LostTimeTypeDescription
+            ,CAST(NULL AS int)                      AS LostTimeMinutesNumber
+            ,CAST(i.fk_fstd_lost_time_qty AS int)   AS FSTDLostTimeMinutesNumber
+            ,rct.RCType                             AS FSTDTypeName
+            ,cs.type                                AS RootCauseTypeName
+            ,cs.description                         AS RootCauseTypeDescription
             ,(SELECT MAX(ct) FROM (VALUES 
                     (ips.hvr_change_time),
                     (i.hvr_change_time),
@@ -127,6 +124,7 @@
                     (ltt.hvr_change_time),
                     (l.hvr_change_time),
                     (pr.hvr_change_time),
+                    (prt.hvr_change_time),
                     (ic.hvr_change_time),
                     (ra.hvr_change_time),
                     (trc.hvr_change_time),
@@ -153,6 +151,8 @@
                 ON s.loc_id = l.PKey
             LEFT OUTER JOIN {{ source('fsi_issues2', 'tblPriority') }} AS pr
                 ON i.fk_prioritypk = pr.pkey
+            LEFT OUTER JOIN {{ source('fsi_issues2', 'tblPriorityType') }} AS prt
+                ON pr.fk_prioritytype = prt.pkey
             LEFT OUTER JOIN {{ source('fsi_issues2', 'tblIssueCategory') }} AS ic
                 ON i.fk_issue_category = ic.pkey
             LEFT OUTER JOIN {{ source('sim2', 'tblCertAgency') }} AS ra
@@ -171,21 +171,22 @@
 
     INSERT INTO {{ this }} (
          IssuePKey
-        ,IssueID
+        ,IssueId
         ,IssueDate
         ,IssueTime
         ,SimulatorPKey
         ,SimulatorId
-        ,IsAffectedSystem
+        ,IsAffectedSystem    
         ,AffectedConfigurationList
         ,CenterKey
         ,IssueDescription
-        ,IssueTypeDescription
-        ,IssuePriorityNumber
+        ,IssueTypeDescription     
+        ,IssuePriorityNumber      
+        ,IssuePriority   
         ,IssueStatusName
         ,IssueCategoryName
         ,IssueClassificationName
-        ,IssueCloseTimestamp
+        ,IssueCloseTimestamp      
         ,TrainingRestrictionText
         ,IsCriticalTrainingIssue
         ,TrainingCategoryName
@@ -193,8 +194,8 @@
         ,IsMMI
         ,DocumentNumber
         ,ChargeCode
-        ,DueDate
-        ,WrittenByName
+        ,DueDate    
+        ,WrittenByName    
         ,WrittenByContactInfoTxt
         ,RegulatoryAgencyName
         ,LostTimeTypeDescription
@@ -208,21 +209,22 @@
     )
     SELECT
          IssuePKey
-        ,IssueID
+        ,IssueId
         ,IssueDate
         ,IssueTime
         ,SimulatorPKey
         ,SimulatorId
-        ,IsAffectedSystem
+        ,IsAffectedSystem    
         ,AffectedConfigurationList
         ,CenterKey
         ,IssueDescription
-        ,IssueTypeDescription
-        ,IssuePriorityNumber
+        ,IssueTypeDescription     
+        ,IssuePriorityNumber      
+        ,IssuePriority   
         ,IssueStatusName
         ,IssueCategoryName
         ,IssueClassificationName
-        ,IssueCloseTimestamp
+        ,IssueCloseTimestamp      
         ,TrainingRestrictionText
         ,IsCriticalTrainingIssue
         ,TrainingCategoryName
@@ -230,8 +232,8 @@
         ,IsMMI
         ,DocumentNumber
         ,ChargeCode
-        ,DueDate
-        ,WrittenByName
+        ,DueDate    
+        ,WrittenByName    
         ,WrittenByContactInfoTxt
         ,RegulatoryAgencyName
         ,LostTimeTypeDescription
@@ -265,6 +267,7 @@
         "fsi_issues2.tblLostTimeType",
         "employee2.tblLocation",
         "fsi_issues2.tblPriority",
+        "fsi_issues2.tblPriorityType",
         "fsi_issues2.tblIssueCategory",
         "sim2.tblCertAgency",
         "fsi_issues2.tblIssue_Trng_Category",

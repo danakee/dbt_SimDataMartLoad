@@ -35,6 +35,7 @@ sources:
       - name: tblClassification
       - name: tblLostTimeType
       - name: tblPriority
+      - name: tblPriorityType
       - name: tblIssueCategory
       - name: tblIssue_Trng_Category
       - name: tblCause
