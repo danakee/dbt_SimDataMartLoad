@@ -1318,3 +1318,98 @@ models:
           record is updated.
         data_type: datetimeoffset
         quote: true
+  - name: dim_time
+    description: The 'dim_time' model is a dimension table in the
+      SimulationsAnalytics database. It contains various time-related attributes
+      such as Time, Hour, Minute, Second, AMPM, Hour24, Hour12, MinuteOfDay,
+      SecondOfDay, PeriodOfDay, and TimeInWords. The model also includes
+      system-generated fields such as HVRChangeTime, EDWLastUpdatedDatetime,
+      TimeKey, and EDWCreatedDatetime. The model is populated from the StageTime
+      table in the SimulationsAnalyticsStage database. The data is merged into
+      the 'dim_time' model based on the TimeKey. If a matching record is found,
+      the existing record is updated; otherwise, a new record is inserted. The
+      process also logs the number of rows inserted, updated, and deleted, along
+      with the execution status and any error messages.
+    columns:
+      - name: TimeKey
+        description: Unique identifier for each time record in the DimTime model. This
+          is the primary key for the table.
+        data_type: int
+        quote: true
+      - name: Time
+        description: The time of day in HH:MM:SS format. This field is used to represent
+          the time in a human-readable format.
+        data_type: time
+        quote: true
+      - name: Hour
+        description: The hour component of the time. This field is used to filter or
+          group data by the hour of the day.
+        data_type: int
+        quote: true
+      - name: Minute
+        description: This column represents the minute component of a specific time in
+          the 'DimTime' model. It is an integer value ranging from 0 to 59.
+        data_type: int
+        quote: true
+      - name: Second
+        description: This column represents the second component of a specific time in
+          the 'DimTime' model. It is an integer value ranging from 0 to 59.
+        data_type: int
+        quote: true
+      - name: ampm
+        description: This column indicates whether the time is in the AM (Ante Meridiem)
+          or PM (Post Meridiem) period of the day in the 'DimTime' model. It is
+          a string value that can either be 'AM' or 'PM'.
+        data_type: varchar
+      - name: Hour24
+        description: This column represents the hour of the day in a 24-hour format. It
+          ranges from 0 to 23, where 0 represents midnight and 23 represents the
+          last hour of the day.
+        data_type: int
+        quote: true
+      - name: Hour12
+        description: This column represents the hour of the day in a 12-hour format. It
+          ranges from 1 to 12, where 1 represents the first hour of the day or
+          afternoon and 12 represents noon or midnight.
+        data_type: int
+        quote: true
+      - name: MinuteOfDay
+        description: This column represents the minute of the day. It ranges from 0 to
+          1439, where 0 represents the first minute of the day and 1439
+          represents the last minute of the day.
+        data_type: int
+        quote: true
+      - name: SecondOfDay
+        description: This column represents the number of seconds that have passed since
+          the start of the day. It is an integer value ranging from 0 to 86400.
+        data_type: int
+        quote: true
+      - name: PeriodOfDay
+        description: This column categorizes the time of day into different periods such
+          as 'Morning', 'Afternoon', 'Evening', and 'Night'. It is a string
+          value.
+        data_type: varchar
+        quote: true
+      - name: TimeInWords
+        description: This column represents the time in a human-readable format. For
+          example, 'Half past two in the afternoon'. It is a string value.
+        data_type: nvarchar
+        quote: true
+      - name: HVRChangeTime
+        description: This column represents the timestamp when the last change was made
+          in the source system. It is used to identify new or updated records
+          for the ETL process.
+        data_type: datetimeoffset
+        quote: true
+      - name: EDWCreatedDatetime
+        description: This column represents the timestamp when the record was first
+          created in the Enterprise Data Warehouse (EDW). It is automatically
+          populated during the ETL process.
+        data_type: datetimeoffset
+        quote: true
+      - name: EDWLastUpdatedDatetime
+        description: This column represents the timestamp when the record was last
+          updated in the Enterprise Data Warehouse (EDW). It is automatically
+          updated during the ETL process whenever a record is modified.
+        data_type: datetimeoffset
+        quote: true

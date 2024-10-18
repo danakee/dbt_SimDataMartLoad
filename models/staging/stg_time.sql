@@ -16,18 +16,18 @@ WITH Numbers AS (
 )
 
 SELECT
-     TimeValue                                                   AS TimeKey
-    ,CAST(DATEADD(SECOND, TimeValue, '00:00:00') AS TIME)        AS [Time]
-    ,DATEPART(HOUR, DATEADD(SECOND, TimeValue, '00:00:00'))      AS Hour
-    ,DATEPART(MINUTE, DATEADD(SECOND, TimeValue, '00:00:00'))    AS Minute
-    ,DATEPART(SECOND, DATEADD(SECOND, TimeValue, '00:00:00'))    AS Second
+     TimeValue                                                  AS TimeKey
+    ,CAST(DATEADD(SECOND, TimeValue, '00:00:00') AS TIME)       AS [Time]
+    ,DATEPART(HOUR, DATEADD(SECOND, TimeValue, '00:00:00'))     AS Hour
+    ,DATEPART(MINUTE, DATEADD(SECOND, TimeValue, '00:00:00'))   AS Minute
+    ,DATEPART(SECOND, DATEADD(SECOND, TimeValue, '00:00:00'))   AS Second
     ,CASE WHEN DATEPART(HOUR, DATEADD(SECOND, TimeValue, '00:00:00')) < 12 THEN 'AM' ELSE 'PM' END AS AMPM
-    ,DATEPART(HOUR, DATEADD(SECOND, TimeValue, '00:00:00'))      AS Hour24
+    ,DATEPART(HOUR, DATEADD(SECOND, TimeValue, '00:00:00'))     AS Hour24
     ,CASE 
         WHEN DATEPART(HOUR, DATEADD(SECOND, TimeValue, '00:00:00')) = 0 THEN 12
         WHEN DATEPART(HOUR, DATEADD(SECOND, TimeValue, '00:00:00')) <= 12 THEN DATEPART(HOUR, DATEADD(SECOND, TimeValue, '00:00:00'))
         ELSE DATEPART(HOUR, DATEADD(SECOND, TimeValue, '00:00:00')) - 12
-     END                                                         AS Hour12
+     END                                                        AS Hour12
     ,DATEPART(HOUR, DATEADD(SECOND, TimeValue, '00:00:00')) * 60 + DATEPART(MINUTE, DATEADD(SECOND, TimeValue, '00:00:00')) AS MinuteOfDay
     ,DATEDIFF(SECOND, '00:00:00', DATEADD(SECOND, TimeValue, '00:00:00')) AS SecondOfDay
     ,CASE 
@@ -35,7 +35,9 @@ SELECT
         WHEN DATEPART(HOUR, DATEADD(SECOND, TimeValue, '00:00:00')) BETWEEN 12 AND 16 THEN 'Afternoon'
         WHEN DATEPART(HOUR, DATEADD(SECOND, TimeValue, '00:00:00')) BETWEEN 17 AND 20 THEN 'Evening'
         ELSE 'Night'
-     END                                                         AS PeriodOfDay
-    ,FORMAT(DATEADD(SECOND, TimeValue, '00:00:00'), 'h:mm tt')   AS TimeInWords
+     END                                                        AS PeriodOfDay
+    ,FORMAT(DATEADD(SECOND, TimeValue, '00:00:00'), 'h:mm tt')  AS TimeInWords
+    ,CAST(sysdatetimeoffset() AS datetimeoffset(3))             AS HVRChangeTime
+    ,CAST(sysdatetimeoffset() AS datetimeoffset(3))             AS StageCreatedDatetime
 FROM 
     Numbers
