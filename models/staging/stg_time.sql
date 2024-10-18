@@ -41,3 +41,5 @@ SELECT
     ,CAST(sysdatetimeoffset() AS datetimeoffset(3))             AS StageCreatedDatetime
 FROM 
     Numbers
+ORDER BY     
+    [Time]
