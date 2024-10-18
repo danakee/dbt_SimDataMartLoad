@@ -783,3 +783,474 @@ models:
           made to the record in the EDW.
         data_type: datetime
         quote: true
+  - name: dim_budget_hierarchy
+    description: The 'dim_budget_hierarchy' model is a dimension table in the
+      SimulationsAnalytics database. It is used to store the budget hierarchy
+      data. The model is populated from the 'StageBudgetHierarchy' table in the
+      'SimulationsAnalyticsStage' database. The data is merged into the
+      'dim_budget_hierarchy' table based on matching 'BudgetCategoryTypeCode',
+      'BudgetCategoryName', and 'BudgetItemCode'. If a match is found and there
+      are differences in 'BudgetItemName' or 'HvrChangeTime', the record is
+      updated. If no match is found, a new record is inserted. The process is
+      logged in the 'DBTProcessExecutionLog' table in the
+      'SimulationsAnalyticsLogging' database.
+    columns:
+      - name: BudgetHierarchyKey
+        description: This is the primary key for the dim_budget_hierarchy table. It is a
+          unique identifier for each record in the table.
+        data_type: int
+        quote: true
+      - name: BudgetCategoryTypeCode
+        description: This column represents the code associated with the type of budget
+          category. It is used to categorize the budget items into different
+          types.
+        data_type: varchar
+        quote: true
+      - name: BudgetCategoryName
+        description: This column represents the name of the budget category. It provides
+          a descriptive name for the budget category type code.
+        data_type: varchar
+        quote: true
+      - name: BudgetItemCode
+        description: This column represents the unique code assigned to each budget
+          item. It is used to uniquely identify each budget item in the
+          'DimBudgetHierarchy' table.
+        data_type: varchar
+        quote: true
+      - name: BudgetItemName
+        description: This column represents the name of each budget item. It provides a
+          human-readable identifier for each budget item in the
+          'DimBudgetHierarchy' table.
+        data_type: varchar
+        quote: true
+      - name: HvrChangeTime
+        description: This column represents the timestamp of the last change made to the
+          record. It is used to track changes and updates to each record in the
+          'DimBudgetHierarchy' table.
+        data_type: datetimeoffset
+        quote: true
+      - name: EDWCreatedDateTime
+        description: This column represents the date and time when the record was first
+          created in the EDW (Enterprise Data Warehouse). It is automatically
+          populated when a new record is inserted into the 'DimBudgetHierarchy'
+          table.
+        data_type: datetimeoffset
+        quote: true
+      - name: EDWLastUpdatedDateTime
+        description: This column represents the date and time when the record was last
+          updated in the EDW (Enterprise Data Warehouse). It is automatically
+          updated every time a record in the 'DimBudgetHierarchy' table is
+          modified.
+        data_type: datetimeoffset
+        quote: true
+  - name: dim_department_group
+    description: The 'dim_department_group' model is a dimension table in the
+      SimulationsAnalytics database. It contains information about different
+      department groups. The model is populated from the 'StageDepartmentGroup'
+      table in the 'SimulationsAnalyticsStage' database. The data is merged into
+      the 'dim_department_group' table based on the 'DepartmentPKey'. If a match
+      is found, the existing record is updated; if no match is found, a new
+      record is inserted. The model also logs the process execution details,
+      including the number of rows inserted, updated, and deleted, as well as
+      any errors that occur during the process.
+    columns:
+      - name: DepartmentGroupKey
+        description: This is the primary key for the Department Group dimension table.
+          It is a unique identifier for each department group in the
+          organization.
+        data_type: int
+        quote: true
+      - name: DepartmentPKey
+        description: This is the primary key from the source system for the Department
+          Group. It is used to track changes in the source system and to merge
+          data into the Department Group dimension table.
+        data_type: int
+        quote: true
+      - name: DepartmentId
+        description: This is the unique identifier for each department within a
+          department group. It is used to link the Department Group dimension to
+          other tables in the data warehouse.
+        data_type: varchar
+        quote: true
+      - name: DepartmentGroupName
+        description: The name of the department group. This is a unique identifier for
+          each department group.
+        data_type: varchar
+        quote: true
+      - name: DepartmentGroupDescription
+        description: A detailed description of the department group. This provides
+          additional context about the department group.
+        data_type: varchar
+        quote: true
+      - name: HVRChangeTime
+        description: The timestamp indicating the last time the department group record
+          was updated. This is used for tracking changes and updates to the
+          department group data.
+        data_type: datetimeoffset
+        quote: true
+      - name: EDWCreatedDatetime
+        description: This column represents the datetime when the record was first
+          created in the EDW (Enterprise Data Warehouse). The value is
+          automatically populated by the system when a new record is inserted
+          into the 'DimDepartmentGroup' table.
+        data_type: datetimeoffset
+        quote: true
+      - name: EDWLastUpdatedDatetime
+        description: This column represents the datetime when the record was last
+          updated in the EDW (Enterprise Data Warehouse). The value is
+          automatically updated by the system whenever an existing record in the
+          'DimDepartmentGroup' table is modified.
+        data_type: datetimeoffset
+        quote: true
+  - name: dim_department
+    description: The 'dim_department' model is a dimension table that contains
+      information about different departments within an organization. It
+      includes details such as the department ID, location ID, department name,
+      department head ID, and whether the department is active or not. The model
+      also includes fields for tracking changes, such as the time of the last
+      update. The data for this model is sourced from the 'StageDepartment'
+      table in the 'SimulationsAnalyticsStage' database. The model uses a MERGE
+      statement to update existing records and insert new ones based on the
+      'DepartmentPKey' field. The process of updating and inserting records is
+      logged in the 'DBTProcessExecutionLog' table in the
+      'SimulationsAnalyticsLogging' database.
+    columns:
+      - name: DepartmentKey
+        description: The unique identifier for each department in the DimDepartment
+          model. This is an auto-incrementing integer and serves as the primary
+          key in the DimDepartment table.
+        data_type: int
+        quote: true
+      - name: DepartmentPKey
+        description: The primary key from the source system for each department. This is
+          used to track changes in the source system and to merge updates into
+          the DimDepartment model.
+        data_type: int
+        quote: true
+      - name: DepartmentId
+        description: The unique identifier for each department as provided by the source
+          system. This is used for business-level identification and reporting.
+        data_type: varchar
+        quote: true
+      - name: LocationId
+        description: The unique identifier for the location of the department. This is a
+          foreign key that links to the location dimension table.
+        data_type: varchar
+        quote: true
+      - name: DepartmentLocationName
+        description: The name of the location where the department is situated. This is
+          a descriptive field that provides more context about the location of
+          the department.
+        data_type: varchar
+        quote: true
+      - name: DepartmentName
+        description: The name of the department. This is a descriptive field that
+          provides the official name of the department.
+        data_type: varchar
+        quote: true
+      - name: EACDepartmentName
+        description: The name of the department as defined in the EAC system.
+        data_type: varchar
+        quote: true
+      - name: EACGroupId
+        description: The unique identifier for the group within the EAC system.
+        data_type: int
+        quote: true
+      - name: EACGroupName
+        description: The name of the group as defined in the EAC system.
+        data_type: varchar
+        quote: true
+      - name: DivisionIdCode
+        description: The unique identifier code for the division. This is a primary key.
+        data_type: varchar
+        quote: true
+      - name: DivisionName
+        description: The name of the division. This is a descriptive field that provides
+          the name of the division.
+        data_type: varchar
+        quote: true
+      - name: ParentDivisionIdCode
+        description: The unique identifier code for the parent division. This is a
+          foreign key that links to the division that is the parent of the
+          current division.
+        data_type: varchar
+        quote: true
+      - name: ParentDivisionName
+        description: The name of the parent division for the department. This is a
+          string value that represents the name of the division that the
+          department falls under.
+        data_type: varchar
+        quote: true
+      - name: LocationTypeCode
+        description: The code representing the type of location where the department is
+          situated. This is a string value that represents a unique identifier
+          for the type of location.
+        data_type: varchar
+        quote: true
+      - name: LocationTypeDescription
+        description: A description of the type of location where the department is
+          situated. This is a string value that provides more detailed
+          information about the location type.
+        data_type: varchar
+        quote: true
+      - name: DepartmentHeadId
+        description: This column represents the unique identifier for the head of the
+          department. It is a foreign key that links to the employee table for
+          more details about the department head.
+        data_type: int
+        quote: true
+      - name: DepartmentPoolId
+        description: This column represents the unique identifier for the department
+          pool. It is used to group departments together for reporting and
+          management purposes.
+        data_type: int
+        quote: true
+      - name: DepartmentPoolName
+        description: This column represents the name of the department pool. It provides
+          a human-readable identifier for the department pool, which is used in
+          reports and user interfaces.
+        data_type: varchar
+        quote: true
+      - name: DepartmentHeadName
+        description: The name of the head of the department. This is a string value that
+          represents the full name of the department head.
+        data_type: varchar
+        quote: true
+      - name: DepartmentHeadTitle
+        description: The title of the head of the department. This is a string value
+          that represents the professional title of the department head.
+        data_type: varchar
+        quote: true
+      - name: IsActive
+        description: A flag indicating whether the department is active. This is a
+          boolean value where '1' indicates that the department is active and
+          '0' indicates that the department is not active.
+        data_type: bit
+        quote: true
+      - name: HVRChangeTime
+        description: This column represents the timestamp when the last change was made
+          in the source system. It is used to identify new or updated records
+          for the ETL process.
+        data_type: datetimeoffset
+        quote: true
+      - name: EDWCreatedDatetime
+        description: This column represents the timestamp when the record was first
+          created in the Enterprise Data Warehouse (EDW). It is automatically
+          populated during the ETL process.
+        data_type: datetimeoffset
+        quote: true
+      - name: EDWLastUpdatedDatetime
+        description: This column represents the timestamp when the record was last
+          updated in the Enterprise Data Warehouse (EDW). It is automatically
+          updated during the ETL process whenever a record is modified.
+        data_type: datetimeoffset
+        quote: true
+  - name: dim_issue
+    description: The 'dim_issue' model is a dimension table that stores information
+      about issues in a simulation analytics system. It includes details such as
+      the issue ID, date and time of the issue, simulator details, issue
+      description, priority, status, category, classification, and other related
+      information. The model is updated by merging data from the 'StageIssue'
+      table in the 'SimulationsAnalyticsStage' database. The merge operation
+      updates existing records if there are changes in the source data and
+      inserts new records if they do not exist in the 'dim_issue' table. The
+      process also logs execution details such as the number of rows inserted,
+      updated, and deleted, and any errors that occur during the process.
+    columns:
+      - name: IssueKey
+        description: The unique identifier for each issue in the 'DimIssue' model. This
+          is a system-generated key and is used for internal purposes.
+        data_type: int
+        quote: true
+      - name: IssuePKey
+        description: The primary key for each issue in the 'DimIssue' model. This key is
+          used to uniquely identify each issue and is used for joining with
+          other tables.
+        data_type: int
+        quote: true
+      - name: IssueId
+        description: The unique identifier for each issue as provided by the source
+          system. This ID is used for reporting and analysis purposes.
+        data_type: int
+        quote: true
+      - name: IssueDate
+        description: The date when the issue was created. It is stored in the format
+          YYYY-MM-DD.
+        data_type: date
+        quote: true
+      - name: IssueTime
+        description: The time when the issue was created. It is stored in the format
+          HH:MM:SS.
+        data_type: time
+        quote: true
+      - name: SimulatorPKey
+        description: The primary key of the simulator where the issue was identified. It
+          is a unique identifier for each simulator.
+        data_type: int
+        quote: true
+      - name: SimulatorId
+        description: The unique identifier for the simulator where the issue occurred.
+        data_type: int
+        quote: true
+      - name: IsAffectedSystem
+        description: A boolean flag indicating whether the system was affected by the issue.
+        data_type: bit
+        quote: true
+      - name: AffectedConfigurationList
+        description: A list of configurations that were affected by the issue.
+        data_type: varchar
+        quote: true
+      - name: CenterKey
+        description: This is a unique identifier for the center where the issue occurred.
+        data_type: int
+        quote: true
+      - name: IssueDescription
+        description: This field provides a detailed description of the issue.
+        data_type: varchar
+        quote: true
+      - name: IssueTypeDescription
+        description: This field describes the type or category of the issue.
+        data_type: varchar
+        quote: true
+      - name: IssuePriorityNumber
+        description: This column represents the numerical priority assigned to the
+          issue. Lower numbers typically indicate higher priority.
+        data_type: varchar
+        quote: true
+      - name: IssuePriority
+        description: This column represents the priority level of the issue in a
+          descriptive format. For example, priorities might be categorized as
+          'Low', 'Medium', 'High'.
+        data_type: varchar
+        quote: true
+      - name: IssueStatusName
+        description: This column represents the current status of the issue. This could
+          include statuses such as 'Open', 'In Progress', 'Closed', etc.
+        data_type: varchar
+        quote: true
+      - name: IssueCategoryName
+        description: The name of the category to which the issue belongs. This can be
+          used to group similar issues together for analysis and reporting
+          purposes.
+        data_type: varchar
+        quote: true
+      - name: IssueClassificationName
+        description: The name of the classification to which the issue belongs. This can
+          be used to further categorize issues within a category, providing more
+          granular information about the nature of the issue.
+        data_type: varchar
+        quote: true
+      - name: IssueCloseTimestamp
+        description: The timestamp indicating when the issue was closed or resolved.
+          This can be used to track the duration of issues and identify any
+          trends or patterns in issue resolution times.
+        data_type: datetime
+        quote: true
+      - name: TrainingRestrictionText
+        description: This column contains the text description of any training
+          restrictions associated with the issue.
+        data_type: varchar
+        quote: true
+      - name: IsCriticalTrainingIssue
+        description: This column indicates whether the issue is critical to training. It
+          is a boolean value where '1' indicates it is a critical training issue
+          and '0' indicates it is not.
+        data_type: bit
+        quote: true
+      - name: TrainingCategoryName
+        description: This column contains the name of the category that the training
+          issue falls under.
+        data_type: nvarchar
+        quote: true
+      - name: JobNumber
+        description: The unique identifier for the job associated with the issue.
+        data_type: varchar
+        quote: true
+      - name: IsMMI
+        description: A boolean flag indicating whether the issue is related to
+          Man-Machine Interface (MMI).
+        data_type: bit
+        quote: true
+      - name: DocumentNumber
+        description: The unique identifier for the document associated with the issue.
+        data_type: varchar
+        quote: true
+      - name: ChargeCode
+        description: The code associated with the charge for the issue. This is a unique
+          identifier used for billing and tracking purposes.
+        data_type: varchar
+        quote: true
+      - name: DueDate
+        description: The date by which the issue is expected to be resolved. This is
+          used for planning and scheduling purposes.
+        data_type: date
+        quote: true
+      - name: WrittenByName
+        description: The name of the person who reported or documented the issue. This
+          is used for tracking and accountability purposes.
+        data_type: varchar
+        quote: true
+      - name: WrittenByContactInfoTxt
+        description: This column contains the contact information of the person who
+          wrote the issue. It is a text field and can contain any alphanumeric
+          characters.
+        data_type: varchar
+        quote: true
+      - name: RegulatoryAgencyName
+        description: This column contains the name of the regulatory agency associated
+          with the issue. It is a text field and can contain any alphanumeric
+          characters.
+        data_type: varchar
+        quote: true
+      - name: LostTimeTypeDescription
+        description: This column contains a description of the type of lost time
+          associated with the issue. It is a text field and can contain any
+          alphanumeric characters.
+        data_type: varchar
+        quote: true
+      - name: LostTimeMinutesNumber
+        description: This column represents the number of minutes lost due to the issue.
+          It is a numerical value that quantifies the time lost due to the
+          issue.
+        data_type: int
+        quote: true
+      - name: FSTDLostTimeMinutesNumber
+        description: This column represents the number of minutes lost in the
+          Full-Flight Simulator (FSTD) due to the issue. It is a numerical value
+          that quantifies the time lost specifically in the FSTD due to the
+          issue.
+        data_type: int
+        quote: true
+      - name: FSTDTypeName
+        description: This column represents the type of Full-Flight Simulator (FSTD)
+          where the issue occurred. It is a string value that categorizes the
+          FSTD based on its type.
+        data_type: varchar
+        quote: true
+      - name: RootCauseTypeName
+        description: The name of the root cause type associated with the issue. This
+          field helps in categorizing the issue based on the root cause.
+        data_type: varchar
+        quote: true
+      - name: RootCauseTypeDescription
+        description: A detailed description of the root cause type. This field provides
+          more context about the root cause type.
+        data_type: varchar
+        quote: true
+      - name: HvrChangeTime
+        description: The timestamp indicating when the last change was made to the
+          record. This field is useful for tracking data changes over time.
+        data_type: datetimeoffset
+        quote: true
+      - name: EDWCreatedDatetime
+        description: This column represents the datetime when the record was first
+          created in the EDW (Enterprise Data Warehouse). It is automatically
+          populated when a new record is inserted into the 'DimIssue' table.
+        data_type: datetimeoffset
+        quote: true
+      - name: EDWLastUpdatedDatetime
+        description: This column represents the datetime when the record was last
+          updated in the EDW (Enterprise Data Warehouse). It is automatically
+          updated every time a record in the 'DimIssue' table is modified.
+        data_type: datetimeoffset
+        quote: true

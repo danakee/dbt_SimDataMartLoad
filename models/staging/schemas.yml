@@ -176,3 +176,434 @@ models:
           time, and is timezone aware.
         data_type: datetimeoffset
         quote: true
+  - name: stg_budget_hierarchy
+    description: The stg_budget_hierarchy model is a staging table that contains
+      budget hierarchy data. It includes columns for budget category type code,
+      budget category name, budget item code, budget item name, and the time of
+      the last change. The model also logs the process execution, including the
+      number of rows inserted and deleted, the initial and final row count, and
+      any errors that occurred. The data is sourced from the MaterialBudgetItem,
+      MaterialBudgetItemGroup, EACDept, and DeptPool tables in the EAC_Report
+      database.
+    columns:
+      - name: BudgetCategoryTypeCode
+        description: This column represents the type code of the budget category. It can
+          either be 'Labor' or 'Non-Labor'.
+        data_type: varchar
+        quote: true
+      - name: BudgetCategoryName
+        description: This column represents the name of the budget category. It is
+          derived from the 'Name' column of the 'MaterialBudgetItemGroup' or
+          'DeptPool' table, depending on the 'BudgetCategoryTypeCode'.
+        data_type: varchar
+        quote: true
+      - name: BudgetItemCode
+        description: This column represents the code of the budget item. It is derived
+          from the 'Name' column of the 'MaterialBudgetItem' or 'EACDept' table,
+          depending on the 'BudgetCategoryTypeCode'.
+        data_type: varchar
+        quote: true
+      - name: BudgetItemName
+        description: This column represents the name of the budget item. It is derived
+          from the 'Name' field in the 'EACDept' table for labor budget items
+          and from the 'Description' field in the 'MaterialBudgetItem' table for
+          non-labor budget items.
+        data_type: varchar
+        quote: true
+      - name: HvrChangeTime
+        description: This column represents the most recent change time among the source
+          tables. It is derived from the maximum 'hvr_change_time' field among
+          the 'MaterialBudgetItem', 'MaterialBudgetItemGroup', 'EACDept', and
+          'DeptPool' tables.
+        data_type: datetimeoffset
+        quote: true
+      - name: StageCreatedDateTime
+        description: This column represents the date and time when the staging process
+          was executed. It is automatically generated during the staging
+          process.
+        data_type: datetimeoffset
+        quote: true
+  - name: stg_department_group
+    description: The stg_department_group model is a staging table that holds
+      department group data. It is populated from the 'employee2.tblDeptGroup'
+      and 'employee2.tblDepartment' source tables. The model includes columns
+      for the primary key of the department, department ID, department group
+      name, department group description, the time of the last change in the
+      source system (HvrChangeTime), and the time the record was created in the
+      staging table (StageCreatedDatetime). The model is refreshed with data
+      where the HvrChangeTime is later than '2024-10-18T10:04:06.043-04:00'. The
+      process of populating the model is logged in the
+      'SimulationsAnalyticsLogging.dbo.DBTProcessExecutionLog' table, including
+      the number of rows inserted and deleted, and any errors that occurred.
+    columns:
+      - name: DepartmentPKey
+        description: Primary key of the department. This is a unique identifier for each
+          department.
+        data_type: int
+        quote: true
+      - name: DepartmentId
+        description: The ID of the department. This is a unique identifier for each
+          department, but unlike the PKey, this ID is used for external
+          references.
+        data_type: varchar
+        quote: true
+      - name: DepartmentGroupName
+        description: The name of the department group. This is a descriptive name for
+          the group that the department belongs to.
+        data_type: varchar
+        quote: true
+      - name: DepartmentGroupDescription
+        description: This column contains the description of the department group. It is
+          derived from the 'Description' column of the 'tblDeptGroup' table in
+          the 'Employee2' database.
+        data_type: varchar
+        quote: true
+      - name: HvrChangeTime
+        description: This column records the most recent change time between the
+          'hvr_change_time' columns of the 'tblDeptGroup' and 'tblDepartment'
+          tables in the 'Employee2' database. It is used to track changes in the
+          source data.
+        data_type: datetimeoffset
+        quote: true
+      - name: StageCreatedDateTime
+        description: This column records the datetime when the staging process was
+          executed. It is automatically populated with the system datetime at
+          the time of execution.
+        data_type: datetimeoffset
+        quote: true
+  - name: stg_department
+    description: The stg_department model is a staging table that contains
+      department data from various sources. It includes columns for department
+      primary key, department id, location id, department location name,
+      department name, EAC department name, EAC group id, EAC group name,
+      division id code, division name, parent division id code, parent division
+      name, location type code, location type description, department head id,
+      department pool id, department pool name, department head name, department
+      head title, is active status, HVR change time, and stage created datetime.
+      The data is refreshed and logged in the DBTProcessExecutionLog. If the
+      process fails, an error message is raised.
+    columns:
+      - name: DepartmentPKey
+        description: The primary key of the department. This is a unique identifier for
+          each department in the database.
+        data_type: int
+        quote: true
+      - name: DepartmentId
+        description: The ID of the department. This is a unique identifier for each
+          department, but unlike the primary key, it may not be unique across
+          all tables.
+        data_type: varchar
+        quote: true
+      - name: LocationId
+        description: The ID of the location where the department is situated. This is a
+          foreign key that links to the location table.
+        data_type: varchar
+        quote: true
+      - name: DepartmentLocationName
+        description: The name of the location where the department is situated. This is
+          derived from the 'Name' column of the 'tblLocation' table in the
+          'Employee2' database.
+        data_type: varchar
+        quote: true
+      - name: DepartmentName
+        description: The name of the department. This is derived from the 'Name' column
+          of the 'tblDepartment' table in the 'Employee2' database.
+        data_type: varchar
+        quote: true
+      - name: EACDepartmentName
+        description: The name of the department as per the EAC report. This is derived
+          from the 'Name' column of the 'EACDept' table in the 'EAC_Report'
+          database.
+        data_type: varchar
+        quote: true
+      - name: EACGroupId
+        description: The unique identifier for the EAC Group. This is a foreign key that
+          links to the EAC_Groups table in the EAC_Report database.
+        data_type: int
+        quote: true
+      - name: EACGroupName
+        description: The name of the EAC Group. This is derived from the eac_group_desc
+          column in the EAC_Groups table in the EAC_Report database.
+        data_type: varchar
+        quote: true
+      - name: DivisionIdCode
+        description: The unique identifier for the Division. This is a foreign key that
+          links to the tblDivision table in the Employee2 database.
+        data_type: varchar
+        quote: true
+      - name: DivisionName
+        description: The name of the division associated with the department.
+        data_type: varchar
+        quote: true
+      - name: ParentDivisionIdCode
+        description: The unique identifier code of the parent division associated with
+          the department.
+        data_type: varchar
+        quote: true
+      - name: ParentDivisionName
+        description: The name of the parent division associated with the department.
+        data_type: varchar
+        quote: true
+      - name: LocationTypeCode
+        description: The code representing the type of location for the department. This
+          is derived from the 'tblLocationType' table in the 'Employee2'
+          database.
+        data_type: varchar
+        quote: true
+      - name: LocationTypeDescription
+        description: A description of the type of location for the department. This is
+          derived from the 'tblLocationType' table in the 'Employee2' database.
+        data_type: varchar
+        quote: true
+      - name: DepartmentHeadId
+        description: The unique identifier for the head of the department. This is
+          derived from the 'tblEmployee' table in the 'Employee2' database.
+        data_type: int
+        quote: true
+      - name: DepartmentPoolId
+        description: The unique identifier for the department pool. This is a foreign
+          key that links to the department pool table.
+        data_type: int
+        quote: true
+      - name: DepartmentPoolName
+        description: The name of the department pool. This is a descriptive field that
+          provides the name of the department pool associated with the
+          department.
+        data_type: varchar
+        quote: true
+      - name: DepartmentHeadName
+        description: The name of the head of the department. This is a concatenated
+          field that combines the first and last name of the department head.
+        data_type: varchar
+        quote: true
+      - name: DepartmentHeadTitle
+        description: The job title of the department head. This is a string value that
+          is derived from the 'Title' column of the 'tblEmpJobTitle' table in
+          the 'Employee2' database.
+        data_type: varchar
+        quote: true
+      - name: IsActive
+        description: A boolean flag indicating whether the department is active or not.
+          This is a binary value (1 or 0) that is derived from the 'Active'
+          column of the 'tblDepartment' table in the 'Employee2' database.
+        data_type: bit
+        quote: true
+      - name: HvrChangeTime
+        description: The timestamp of the most recent change made to any of the source
+          tables involved in the creation of the 'StageDepartment' table. This
+          is a datetime value that is derived from the 'hvr_change_time' column
+          of the source tables in the 'Employee2' and 'EAC_Report' databases.
+        data_type: datetimeoffset
+        quote: true
+      - name: StageCreatedDateTime
+        description: This column records the date and time when the record was created
+          in the staging table. The value is automatically generated by the
+          system at the time of record creation. The data type is
+          datetimeoffset(3), which includes both date and time, and is timezone
+          aware.
+        data_type: datetimeoffset
+        quote: true
+  - name: stg_issue
+    description: The stg_issue model is a staging table that contains information
+      about issues related to various simulators. It includes details such as
+      the issue ID, issue date and time, simulator key and ID, issue
+      description, issue type, priority, status, category, classification, and
+      other related details. The model also includes information about the
+      training impact of the issue, the job number, document number, charge
+      code, due date, and contact information of the person who reported the
+      issue. The model is updated through a SQL script that inserts new records
+      into the table and logs the process execution.
+    columns:
+      - name: IssuePKey
+        description: This is the primary key for the issue. It is a unique identifier
+          for each issue in the database.
+        data_type: int
+        quote: true
+      - name: IssueId
+        description: This is the ID of the issue. It is a unique identifier for each
+          issue and is used for referencing the issue in other tables or
+          systems.
+        data_type: int
+        quote: true
+      - name: IssueDate
+        description: This is the date when the issue was created or reported. It is
+          stored in the format YYYY-MM-DD.
+        data_type: date
+        quote: true
+      - name: IssueTime
+        description: The time when the issue was reported. This is stored as a time data
+          type.
+        data_type: time
+        quote: true
+      - name: SimulatorPKey
+        description: The primary key of the simulator where the issue occurred. This is
+          stored as an integer data type.
+        data_type: int
+        quote: true
+      - name: SimulatorId
+        description: The unique identifier of the simulator where the issue occurred.
+          This is stored as a string data type.
+        data_type: int
+        quote: true
+      - name: IsAffectedSystem
+        description: This column indicates whether the system is affected by the issue.
+          It is a boolean value where '1' indicates the system is affected and
+          '0' indicates it is not.
+        data_type: bit
+        quote: true
+      - name: AffectedConfigurationList
+        description: This column contains a list of configurations that are affected by
+          the issue. The configurations are represented as strings and are
+          separated by '|'.
+        data_type: varchar
+        quote: true
+      - name: CenterKey
+        description: This column represents the unique identifier for the center where
+          the issue occurred. It is currently set to NULL in the SQL script,
+          indicating that this information may not be available or relevant.
+        data_type: int
+        quote: true
+      - name: IssueDescription
+        description: This column contains the detailed description of the issue. It is a
+          text field that provides information about the problem encountered.
+        data_type: varchar
+        quote: true
+      - name: IssueTypeDescription
+        description: This column describes the type of the issue. It categorizes the
+          issue based on its nature and helps in understanding the context of
+          the problem.
+        data_type: varchar
+        quote: true
+      - name: IssuePriorityNumber
+        description: This column represents the priority of the issue. It is a numerical
+          value that indicates the urgency or importance of the issue. Higher
+          numbers usually represent higher priority.
+        data_type: varchar
+        quote: true
+      - name: IssuePriority
+        description: This column represents the priority level of the issue. It is
+          derived from the 'tblPriority' table in the 'FSI_Issues2' database.
+          The priority level is a description of the urgency of the issue.
+        data_type: varchar
+        quote: true
+      - name: IssueStatusName
+        description: This column represents the current status of the issue. It is
+          derived from the 'tblStatus' table in the 'FSI_Issues2' database. The
+          status name provides a brief description of the current state of the
+          issue.
+        data_type: varchar
+        quote: true
+      - name: IssueCategoryName
+        description: This column represents the category of the issue. It is derived
+          from the 'tblIssueCategory' table in the 'FSI_Issues2' database. The
+          category name provides a classification for the issue.
+        data_type: varchar
+        quote: true
+      - name: IssueClassificationName
+        description: This column represents the classification name of the issue. It is
+          a string type and can contain various categories of issues.
+        data_type: varchar
+        quote: true
+      - name: IssueCloseTimestamp
+        description: This column represents the timestamp when the issue was closed. It
+          is a datetime type and is recorded in the format 'YYYY-MM-DD
+          HH:MI:SS'.
+        data_type: datetime
+        quote: true
+      - name: TrainingRestrictionText
+        description: This column represents any restrictions or special instructions
+          related to training due to the issue. It is a string type and can
+          contain various instructions or restrictions.
+        data_type: varchar
+        quote: true
+      - name: IsCriticalTrainingIssue
+        description: A boolean flag indicating whether the issue is critical for
+          training. If true, the issue is critical and may impact training
+          sessions.
+        data_type: bit
+        quote: true
+      - name: TrainingCategoryName
+        description: The name of the category that the training issue falls under. This
+          helps in classifying the issue for better understanding and
+          resolution.
+        data_type: nvarchar
+        quote: true
+      - name: JobNumber
+        description: The unique identifier for the job or project associated with the
+          issue. This helps in tracking the issue back to a specific job or
+          project.
+        data_type: varchar
+        quote: true
+      - name: IsMMI
+        description: A boolean flag indicating whether the issue is related to
+          Man-Machine Interface (MMI).
+        data_type: bit
+        quote: true
+      - name: DocumentNumber
+        description: The unique identifier for the document associated with the issue.
+        data_type: varchar
+        quote: true
+      - name: ChargeCode
+        description: The code used for billing purposes related to the issue.
+        data_type: varchar
+        quote: true
+      - name: DueDate
+        description: The date by which the issue is expected to be resolved. It is
+          represented in the format YYYY-MM-DD.
+        data_type: date
+        quote: true
+      - name: WrittenByName
+        description: The name of the person who reported or documented the issue.
+        data_type: varchar
+        quote: true
+      - name: WrittenByContactInfoTxt
+        description: The contact information of the person who reported or documented
+          the issue. This could include email, phone number, or other relevant
+          contact details.
+        data_type: varchar
+        quote: true
+      - name: RegulatoryAgencyName
+        description: The name of the regulatory agency associated with the issue.
+        data_type: varchar
+        quote: true
+      - name: LostTimeTypeDescription
+        description: Description of the type of lost time associated with the issue.
+        data_type: varchar
+        quote: true
+      - name: LostTimeMinutesNumber
+        description: The number of minutes lost due to the issue.
+        data_type: int
+        quote: true
+      - name: FSTDLostTimeMinutesNumber
+        description: This column represents the number of minutes lost due to the issue
+          in the Flight Simulator Training Device (FSTD). It is an integer
+          value.
+        data_type: int
+        quote: true
+      - name: FSTDTypeName
+        description: This column represents the type of the Flight Simulator Training
+          Device (FSTD) where the issue occurred. It is a string value.
+        data_type: varchar
+        quote: true
+      - name: RootCauseTypeName
+        description: This column represents the name of the root cause type of the
+          issue. It is a string value.
+        data_type: varchar
+        quote: true
+      - name: RootCauseTypeDescription
+        description: This column contains the description of the root cause type
+          associated with the issue. It provides more detailed information about
+          the root cause type.
+        data_type: varchar
+        quote: true
+      - name: HvrChangeTime
+        description: This column records the timestamp of the most recent change made to
+          the data related to the issue. It is used to track data modifications
+          and updates.
+        data_type: datetimeoffset
+        quote: true
+      - name: StageCreatedDateTime
+        description: This column records the timestamp when the stage was created. It is
+          used to track the creation time of each stage in the process.
+        data_type: datetimeoffset
+        quote: true
